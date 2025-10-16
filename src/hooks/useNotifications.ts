@@ -41,7 +41,7 @@ export default function useNotifications() {
         transports: ["websocket"],
         reconnectionAttempts: 5,
         reconnectionDelay: 2000,
-        withCredentials: false,
+        withCredentials: true,
       });
 
       s.on("connect", () => console.log("socket connected", s.id));
