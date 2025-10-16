@@ -13,7 +13,6 @@ export default function Notification() {
     const listRef = useRef<HTMLDivElement | null>(null);
 
 
-
     // Sort: unread first then recent
     const sorted = [...notifications].sort((a, b) => {
         if (a.isRead === b.isRead) return +new Date(b.createdAt) - +new Date(a.createdAt);
