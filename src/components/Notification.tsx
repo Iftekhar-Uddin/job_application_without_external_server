@@ -10,10 +10,26 @@ export default function Notification() {
     const router = useRouter();
     const [open, setOpen] = useState<boolean>(false);
     const { notifications, markAsRead, markManyAsRead } = useNotifications();
+    const listRef = useRef<HTMLDivElement | null>(null);
     const panelRef = useRef<HTMLDivElement | null>(null);
     const buttonRef = useRef<HTMLButtonElement | null>(null);
-    const listRef = useRef<HTMLDivElement | null>(null);
 
+
+    // Sort: unread first then recent
+    const sorted = [...notifications].sort((a, b) => {
+        if (a.isRead === b.isRead) return +new Date(b.createdAt) - +new Date(a.createdAt);
+        return Number(a.isRead) - Number(b.isRead); // unread (false -> 0) first
+    });
+
+    useEffect(() => {
+        if (!listRef.current) return;
+        // detect items visible and mark read when panel opened (simpler approach)
+        const visibleUnreadIds = sorted.filter(n => !n.isRead).slice(0, 5).map(n => n.id);
+        if (visibleUnreadIds.length) {
+            markManyAsRead(visibleUnreadIds);
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     // Close panel on outside click
     useEffect(() => {
@@ -31,15 +47,7 @@ export default function Notification() {
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-
-
-
-    // Sort: unread first then recent
-    const sorted = [...notifications].sort((a, b) => {
-        if (a.isRead === b.isRead) return +new Date(b.createdAt) - +new Date(a.createdAt);
-        return Number(a.isRead) - Number(b.isRead); // unread (false -> 0) first
-    });
-
+    const unredMessage = sorted.filter((sort) => sort.isRead === false);
 
 
     // useEffect(() => {
@@ -54,17 +62,9 @@ export default function Notification() {
 
 
     // Example: when user opens panel, mark visible items as read after 1s
-    useEffect(() => {
-        if (!listRef.current) return;
-        // detect items visible and mark read when panel opened (simpler approach)
-        const visibleUnreadIds = sorted.filter(n => !n.isRead).slice(0, 5).map(n => n.id);
-        if (visibleUnreadIds.length) {
-            markManyAsRead(visibleUnreadIds);
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
 
-    const unredMessage = sorted.filter((sort) => sort.isRead === false)
+
+
 
 
     return (

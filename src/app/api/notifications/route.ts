@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 
     // best practice: DB persisted first, then call realtime server
     try {
-      await fetch("https://job-app-socket-server.onrender.com", {
+      await fetch(`${SOCKET_URL}/v1/notify`, {
         method: "POST",
         headers: {
           "content-type": "application/json",
@@ -72,3 +72,4 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: error.message || "Internal error" }, { status: 500 });
   }
 }
+
