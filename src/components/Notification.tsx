@@ -15,21 +15,21 @@ export default function Notification() {
     const listRef = useRef<HTMLDivElement | null>(null);
 
 
-  // Close panel on outside click
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        panelRef.current &&
-        !panelRef.current.contains(event.target as Node) &&
-        buttonRef.current &&
-        !buttonRef.current.contains(event.target as Node)
-      ) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+    // Close panel on outside click
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                panelRef.current &&
+                !panelRef.current.contains(event.target as Node) &&
+                buttonRef.current &&
+                !buttonRef.current.contains(event.target as Node)
+            ) {
+                setOpen(false);
+            }
+        };
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => document.removeEventListener("mousedown", handleClickOutside);
+    }, []);
 
 
 
@@ -42,15 +42,27 @@ export default function Notification() {
 
 
 
+    // useEffect(() => {
+    //     if (open && sorted.length > 0 && listRef.current) {
+    //         const visibleUnreadIds = sorted
+    //             .filter((n) => !n.isRead)
+    //             .slice(0, 5)
+    //             .map((n) => n.id);
+    //         if (visibleUnreadIds.length) markManyAsRead(visibleUnreadIds);
+    //     }
+    // }, [open, sorted, markManyAsRead]);
+
+
+    // Example: when user opens panel, mark visible items as read after 1s
     useEffect(() => {
-        if (open && sorted.length > 0 && listRef.current) {
-            const visibleUnreadIds = sorted
-                .filter((n) => !n.isRead)
-                .slice(0, 5)
-                .map((n) => n.id);
-            if (visibleUnreadIds.length) markManyAsRead(visibleUnreadIds);
+        if (!listRef.current) return;
+        // detect items visible and mark read when panel opened (simpler approach)
+        const visibleUnreadIds = sorted.filter(n => !n.isRead).slice(0, 5).map(n => n.id);
+        if (visibleUnreadIds.length) {
+            markManyAsRead(visibleUnreadIds);
         }
-    }, [open, sorted, markManyAsRead]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const unredMessage = sorted.filter((sort) => sort.isRead === false)
 
