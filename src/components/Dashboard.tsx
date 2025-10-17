@@ -30,7 +30,7 @@ const Dashboard = ({ postedJobs, applications }: DashboardProps) => {
     <div className="max-w-7xl mx-auto rounded-md sm:px-6 lg:px-0 min-h-[calc(100vh-10rem)]">
 
       <div className="ring-1 ring-orange-500 rounded-sm md:rounded-md flex flex-col mb-1.5 md:mb-1.5 pt-0 md:pt-1 font-sans bg-amber-100">
-        <h1 className=" md:text-xl md:font-semibold flex justify-center">
+        <h1 className=" md:text-xl md:font-semibold flex justify-center text-orange-500">
           Dashboard
         </h1>
         <div className="flex justify-around items-center pb-1">
@@ -149,8 +149,6 @@ const Dashboard = ({ postedJobs, applications }: DashboardProps) => {
                       View Job
                     </Link>
                   </div>
-
-
                 </div>
               ))
             )}

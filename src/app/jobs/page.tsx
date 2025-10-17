@@ -85,31 +85,32 @@ const TotalJobs = async ({ searchParams }: { searchParams: Promise<{ [key: strin
           }
           {AvailableJobs.map((job) => (
             <div key={job.id}
-              className="w-full min-h-[150px] ring-1 ring-orange-500 rounded-md md:rounded-lg p-3 md:p-4 hover:shadow-lg hover:scale-[0.97] transition-all duration-200 ease-in max-w-[380px]bg-amber-50"
+              className="grid gap-6 md:gap-4 w-full min-h-[130px] ring-1 ring-orange-500 rounded-md md:rounded-lg p-2 md:p-2.5 hover:shadow-lg hover:scale-[0.97] transition-all duration-200 ease-in max-w-[380px]"
             >
-              <div className="flex px-1.5 pt-1.5 text-orange-500 md:px-0 w-full justify-between">
-                <h1 className="font-bold md:text-xl">{job.title}</h1>
+              <div className="flex w-full justify-between">
+                <div>
+                  <h1 className="font-bold md:text-xl text-orange-500">{job.title}</h1>
+                  <h1 className="text-sm">{job.company}</h1>
+                </div>
                 <Link
                   href={`/jobs/${job.id}`}
-                  className="text-black underline text-sm md:text-md cursor-pointer hover:text-black"
+                  className="text-slate-500 underline text-sm md:text-md cursor-pointer hover:text-black"
                 >
                   View Details
                 </Link>
               </div>
 
-              <h1 className="px-1.5 md:px-0 text-sm">{job.company}</h1>
-
-              <div className="flex px-1.5 pt-1.5 md:px-0 w-full justify-between md:mt-4">
+              <div className="flex w-full justify-between">
 
                 <div className="text-sm md:text-base">
-                  <h2 className="text-red-500">Salary: {job.salary}</h2>
-                  <p className="line-clamp-2 text-blue-500">
+                  <h2 className="text-blue-600">Salary: {job.salary}</h2>
+                  <p className="line-clamp-2 text-green-600">
                     {`Type: ${job.type}`}
                   </p>
                 </div>
                 <div className="text-right text-sm md:text-base">
-                  <p className="text-green-500">Exp: {job.experience}</p>
-                  <p className="line-clamp-2 text-yellow-700">
+                  <p className="">Exp: {job.experience}</p>
+                  <p className="line-clamp-2 text-red-500">
                     {job.deadline && `Deadline: ${new Date(job.deadline).toLocaleDateString()}`}
                   </p>
                 </div>
