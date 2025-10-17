@@ -22,7 +22,7 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
 
     // Notify realtime server to broadcast to other sessions/tabs
     try {
-      await fetch(SOCKET_URL, {
+      await fetch("https://job-app-socket-server.onrender.com", {
         method: "POST",
         headers: {
           "content-type": "application/json",

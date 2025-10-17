@@ -124,9 +124,3 @@ const TotalJobs = async ({ searchParams }: { searchParams: Promise<{ [key: strin
 };
 
 export default TotalJobs;
-
-
-
-{/* <div key={job.id}
-  className="w-72 md:w-[380px] md:min-h-[150px] ring-1 ring-cyan-700 rounded-sm md:rounded-lg md:p-2 md:gap-x-4 md:gap-y-2 p-1 hover:shadow-md hover:scale-[0.97] transition-all duration-200 ease-in"
-></div> */}

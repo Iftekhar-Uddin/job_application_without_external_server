@@ -2,13 +2,9 @@
 
 import { Bell } from "lucide-react";
 import { useRouter } from 'next/navigation'
-import React, { RefObject, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import useNotifications from "@/hooks/useNotifications";
 
-// type NotificationProps = {
-//     mouseRef: RefObject<HTMLDivElement>;
-// };
-// { mouseRef }: NotificationProps
 
 export default function Notification() {
     const router = useRouter();
