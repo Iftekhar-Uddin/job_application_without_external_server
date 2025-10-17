@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 
-const SOCKET_URL = process.env.SOCKET_URL!;
+const SOCKET_URL = process.env.SOCKET_URL;
 const INTERNAL_API_KEY = process.env.INTERNAL_API_KEY!;
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
