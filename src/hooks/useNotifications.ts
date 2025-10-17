@@ -36,7 +36,7 @@ export default function useNotifications() {
       }
       const { token } = await res.json();
 
-      const s = io(process.env.SOCKET_URL, {
+      const s = io("https://job-app-socket-server.onrender.com", {
         auth: { token },
         transports: ["websocket"],
         reconnectionAttempts: 5,
