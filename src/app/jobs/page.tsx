@@ -38,7 +38,7 @@ const TotalJobs = async ({ searchParams }: { searchParams: Promise<{ [key: strin
 
   return (
     <div className="">
-      <div className="max-w-7xl mx-auto p-2 md:p-4 bg-amber-100 rounded-md">
+      <div className="max-w-7xl mx-auto p-2 md:p-4 bg-amber-100 rounded-md ring-1 ring-orange-500">
         <h1 className="text-base md:text-2xl font-semibold text-orange-500">Find your Job</h1>
         <div className="w-full mt-1 md:mt-2">
           <form className="grid gap-2 md:gap-4 grid-cols-3">
@@ -73,11 +73,11 @@ const TotalJobs = async ({ searchParams }: { searchParams: Promise<{ [key: strin
           </form>
         </div>
       </div>
-      <div className="max-w-7xl mx-auto bg-amber-100 md:mt-4 mt-2 rounded-lg  p-2 md:p-4">
+      <div className="max-w-7xl mx-auto bg-amber-100 md:mt-4 mt-2 rounded-lg  p-2 md:p-4 ring-1 ring-orange-500">
         <h1 className="text-lg md:text-3xl text-center text-orange-500 md:mb-4 underline">
           Available Jobs
         </h1>
-        <div className={`${AvailableJobs.length === 0 ? "flex items-center" : "grid gap-y-4 md:grid-cols-1 md:gap-6 lg:grid-cols-2 xl:grid-cols-3 items-start"} justify-items-center-safe py-4 max-h-[calc(100vh-15rem)] overflow-y-auto`}>
+        <div className={`${AvailableJobs.length === 0 ? "flex items-center" : "grid gap-4 grid-cols-[repeat(auto-fit,minmax(280px,1fr))] justify-items-center p-2"} max-h-[calc(100vh-15rem)] overflow-y-auto`}>
           {AvailableJobs.length === 0 &&
             <div className="w-full flex justify-center">
               <h1 className="text-lg md:text-4xl text-orange-500 bg-gray-200 p-4 rounded-lg">No Job Available! Please try again.</h1>
@@ -85,7 +85,7 @@ const TotalJobs = async ({ searchParams }: { searchParams: Promise<{ [key: strin
           }
           {AvailableJobs.map((job) => (
             <div key={job.id}
-              className="w-72 md:w-[380px] md:min-h-[150px] ring-1 ring-cyan-700 rounded-sm md:rounded-lg md:p-2 md:gap-x-4 md:gap-y-2 p-1 hover:shadow-md hover:scale-[0.97] transition-all duration-200 ease-in"
+              className="w-full min-h-[150px] ring-1 ring-orange-500 rounded-md md:rounded-lg p-3 md:p-4 hover:shadow-lg hover:scale-[0.97] transition-all duration-200 ease-in max-w-[380px]bg-amber-50"
             >
               <div className="flex px-1.5 pt-1.5 text-orange-500 md:px-0 w-full justify-between">
                 <h1 className="font-bold md:text-xl">{job.title}</h1>
@@ -124,3 +124,9 @@ const TotalJobs = async ({ searchParams }: { searchParams: Promise<{ [key: strin
 };
 
 export default TotalJobs;
+
+
+
+{/* <div key={job.id}
+  className="w-72 md:w-[380px] md:min-h-[150px] ring-1 ring-cyan-700 rounded-sm md:rounded-lg md:p-2 md:gap-x-4 md:gap-y-2 p-1 hover:shadow-md hover:scale-[0.97] transition-all duration-200 ease-in"
+></div> */}

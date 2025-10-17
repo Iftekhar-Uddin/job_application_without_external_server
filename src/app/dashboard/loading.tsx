@@ -52,7 +52,7 @@ const loading = () => {
                                         <div className="w-40 h-4 bg-amber-200 rounded" />
                                         <div className="w-24 h-3 bg-amber-200 rounded" />
                                     </div>
-                                    <div className="w-20 h-6 bg-amber-300 rounded-full" />
+                                    <div className="w-20 h-6 bg-amber-200 rounded-full" />
                                 </div>
                                 <div className="flex flex-wrap items-center gap-2 text-sm">
                                     <div className="w-20 h-3 bg-amber-200 rounded" />

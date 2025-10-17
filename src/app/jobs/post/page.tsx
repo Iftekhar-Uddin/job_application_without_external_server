@@ -77,7 +77,7 @@ const PostYourJob = (e:any) => {
   {if(session){
     return (
     <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
-      <div className="min-w-xxs w-lg mx-auto md:p-4 bg-amber-100 rounded-md md:rounded-xl">
+      <div className="min-w-xxs w-lg mx-auto md:p-4 bg-amber-100 rounded-md md:rounded-xl ring-1 ring-orange-500">
         <h1 className="md:text-2xl font-bold text-orange-500 ml-2 mt-2">Create a job post</h1>
         <div className="h-[calc(100vh-8rem)] md:h-[calc(100vh-14rem)] overflow-y-auto p-4 scrollbar-thin scrollbar-thumb-orange-500 scrollbar-track-amber-100">
 

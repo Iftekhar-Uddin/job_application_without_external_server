@@ -77,7 +77,7 @@ const settingsPage = () => {
           </div>
         </div>
       </div>
-      <div className='grid grid-rows-1 gap-4 max-h-fit rounded-sm md:rounded-md p-4 ring-1 my-2 bg-amber-100'>
+      <div className='grid grid-rows-1 gap-4 max-h-fit rounded-sm md:rounded-md p-4 ring-1 ring-amber-500 my-2 bg-amber-100'>
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-1 md:gap-2">
           <div className="flex flex-col gap-1.5 md:gap-2">
             <label className="text-sm md:text-base font-bold md:font-semibold text-gray-700">
@@ -147,7 +147,7 @@ const settingsPage = () => {
                 <label className="text-sm md:text-base font-bold md:font-semibold text-gray-700">
                   Two Factor Authentication
                 </label>
-                <p className='text-xs text-blue-400'>Enabled 2FA for your account</p>
+                <p className='text-xs text-slate-500'>Enabled 2FA for your account</p>
               </div>
               <label htmlFor="toggle" className={`cursor-pointer relative w-10 h-5 rounded-full  ${toggle ? " bg-blue-200" : " bg-gray-300"} `} >
                 <input

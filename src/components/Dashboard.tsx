@@ -111,13 +111,13 @@ const Dashboard = ({ postedJobs, applications }: DashboardProps) => {
 
                     <div className="flex flex-col items-end">
                       <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${application?.status === "Reviewing"
-                          ? "bg-white text-orange-400"
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-black ${application?.status === "Reviewing"
+                          ? "text-yellow-400"
                           : application.status === "Accepted"
-                            ? "bg-white text-green-600"
+                            ? "text-green-400"
                             : application.status === "Rejected"
-                            ? "bg-white text-red-600"
-                            : "bg-white text-black"
+                            ? "text-red-500"
+                            : "text-white"
                           }`}
                       >
                         {application?.status}

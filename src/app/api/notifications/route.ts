@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
 
     // best practice: DB persisted first, then call realtime server
     try {
-      await fetch(`https://job-app-socket-server.onrender.com/v1/notify`, {
+      await fetch(SOCKET_URL, {
         method: "POST",
         headers: {
           "content-type": "application/json",

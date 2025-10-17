@@ -19,17 +19,17 @@ export default async function Home() {
   return (
     <div className="mx-auto md:space-y-12 max-w-7xl">
       {/* Hero Section */}
-      <section className="text-center py-4 md:py-16 bg-amber-100 rounded-sm md:rounded-lg shadow-sm ring-1 ring-yellow-500">
-        <h1 className="text-xl md:text-3xl font-semibold md:font-bold text-orange-500 mb-2 md:mb-4">
+      <section className="text-center py-1 md:py-16 bg-amber-100 rounded-sm md:rounded-lg shadow-sm ring-1 ring-orange-300">
+        <h1 className="text-lg md:text-3xl font-semibold md:font-bold text-orange-500 md:mb-4">
           Find Your Dream Job
         </h1>
         {/* <hr className="my-2 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50 dark:via-neutral-400 z-0" /> */}
-        <p className="md:text-xl mb-4 md:mb-8">
+        <p className="text-sm md:text-xl mb-2 md:mb-8">
           Discover thousands of job opportunities with top companies
         </p>
         <Link
           href="/jobs"
-          className="bg-black text-white px-3 md:px-6 py-1.5 md:py-3 rounded-sm md:rounded-md text-sm md:text-lg font-medium"
+          className="bg-black text-white px-3 md:px-6 py-1 md:py-3 rounded-sm md:rounded-md text-sm md:text-lg font-medium"
         >
           Browse Jobs
         </Link>
@@ -42,7 +42,7 @@ export default async function Home() {
             <div
               // href={`/jobs/${job.id}`}
               key={job.id}
-              className="p-3 md:p-6 rounded-sm md:rounded-lg shadow-sm hover:shadow-md md:disabled transition-shadow bg-amber-100"
+              className="p-2 md:p-6 rounded-sm md:rounded-lg shadow-sm hover:shadow-md md:disabled transition-shadow bg-amber-100"
             >
               <h3 className="md:text-xl font-semibold text-orange-500">
                 {job.title}
@@ -57,7 +57,7 @@ export default async function Home() {
                 {job?.responsibilities}
               </p>
               <Link href={`/jobs/${job.id}`}
-                className="text-gray-500 text-sm md:text-base flex justify-end hover:text-gray-800 font-medium mt-2"
+                className="text-gray-500 text-xs md:text-base flex justify-end hover:text-gray-800 font-medium mt-2"
               >
                 View Details →
               </Link>
