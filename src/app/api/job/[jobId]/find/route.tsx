@@ -12,7 +12,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ jobI
 
   try {
     const { jobId } = await params;
-    
+
     const existingApplication = await prisma.application.findFirst({
       where: {
         jobId: jobId,
@@ -21,7 +21,7 @@ export async function GET(request: Request, { params }: { params: Promise<{ jobI
     })
 
     return NextResponse.json(existingApplication)
-    
+
   } catch (error) {
     console.error("get applied error: ", error);
     return new NextResponse("Internal server error", { status: 500 });

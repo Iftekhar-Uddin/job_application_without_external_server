@@ -1,6 +1,10 @@
+import type { NextAuthConfig } from "next-auth";
 import GitHub from "next-auth/providers/github";
 import Google from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import type { NextAuthConfig } from "next-auth";
 
-export default { providers: [CredentialsProvider , GitHub , Google] } satisfies NextAuthConfig
+const authConfig: NextAuthConfig = {
+  providers: [CredentialsProvider, GitHub, Google],
+};
+
+export default authConfig;

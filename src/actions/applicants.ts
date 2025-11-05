@@ -1,5 +1,4 @@
 "use server"
-
 import { prisma } from "@/lib/prisma"
 
 export const applicants = async (applicationId: string, jobId: string, status: string) => {

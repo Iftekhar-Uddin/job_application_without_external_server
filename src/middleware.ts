@@ -1,49 +1,61 @@
-import NextAuth from "next-auth";
-import authConfig from "./auth.config";
+import { NextResponse } from "next/server";
+import { auth } from "./auth";
 import { apiAuthPrefix, authRoutes, publicRoutes, Default_Login_Redirect } from "./routes";
 
-const { auth } = NextAuth(authConfig);
+// const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const { nextUrl } = req;
-  const isLogedIn = !!req.auth;
-  const isApiAuthRote = nextUrl.pathname.startsWith(apiAuthPrefix);
+  const isLoggedIn = !!req.auth;
+  const user = req.auth?.user;
+  const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+  const isAdminRoute = nextUrl.pathname.startsWith("/admin") || nextUrl.pathname.startsWith("/api/admin") || nextUrl.pathname.startsWith("/admin/jobs");
 
-  if (isApiAuthRote) {
+  if (isApiAuthRoute) {
     return null
   };
 
   if (isAuthRoute) {
-    if (isLogedIn) {
-      return Response.redirect(new URL(Default_Login_Redirect, nextUrl))
+    if (isLoggedIn) {
+      return NextResponse.redirect(new URL(Default_Login_Redirect, nextUrl))
     }
     return null;
   };
 
-
-  if (!isLogedIn && !isPublicRoute ) {
-    // return Response.redirect(new URL("/auth/signin", nextUrl));
+  if (!isLoggedIn && !isPublicRoute) {
     let callbackUrl = nextUrl.pathname;
-
-    if(nextUrl.search){
+    if (nextUrl.search) {
       callbackUrl += nextUrl.search
     }
+    const encoded = encodeURIComponent(nextUrl.pathname);
+    return NextResponse.redirect(
+      new URL(`/auth/signin?callbackUrl=${encoded}`, nextUrl)
+    );
+  }
 
-    const encodedCallbackUrl = encodeURIComponent(callbackUrl);
-  
-    return Response.redirect(new URL(`/auth/signin?callbackUrl=${encodedCallbackUrl}`, nextUrl));
-  };
 
+  if (isAdminRoute) {
+    if (!isLoggedIn) {
+      const encoded = encodeURIComponent(nextUrl.pathname);
+      return NextResponse.redirect(
+        new URL(`/auth/signin?callbackUrl=${encoded}`, nextUrl)
+      );
+    };
+
+    if (user?.role !== "Admin") {
+      return NextResponse.redirect(new URL("/403", nextUrl));
+    }
+  }
   return null;
 
 });
 
-
 export const config = {
-  matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
-}
+  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+};
+
 
 
 

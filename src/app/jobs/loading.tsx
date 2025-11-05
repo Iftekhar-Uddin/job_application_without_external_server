@@ -1,75 +1,114 @@
 
-const loading = () => {
-
+export default function JobPageSkeleton() {
   return (
-    <div className="">
-      <div className="max-w-7xl mx-auto p-4 bg-amber-100 rounded-md">
-        <h1 className="text-lg md:text-2xl font-semibold text-orange-500">Find your Job</h1>
-        <div className="w-full mt-2">
-          <form className="grid gap-4 grid-cols-3">
-            <input
-              type="text"
-              name="query"
-              placeholder="Search jobs... (e.g., software)"
-              className="border border-gray-500 text-xs md:text-base rounded-xs md:rounded-sm py-1 px-2 focus:outline-none md:focus:ring-1"
-            />
-            <select
-              name="type"
-              className="border border-gray-500 text-xs md:text-base rounded-xs md:rounded-sm py-1 px-2 focus:outline-none md:focus:ring-1"
-            >
-              <option value="">All Types</option>
-              <option value="Internship">Internship</option>
-              <option value="Part time">Part time</option>
-              <option value="Full time">Full time</option>
-              <option value="Contractual">Contractual</option>
-            </select>
-            <input
-              type="text"
-              name="location"
-              placeholder="Location"
-              className="border border-gray-500 text-xs md:text-base rounded-xs md:rounded-sm py-1 px-2 focus:outline-none md:focus:ring-1"
-            />
-            <button
-              type="submit"
-              className="col-span-3 py-0.5 md:py-1 rounded-md bg-orange-400 cursor-pointer"
-            >
-              Search
-            </button>
-          </form>
-        </div>
-      </div>
+    <div className="max-w-7xl mx-auto min-h-[calc(100vh-9rem)] px-4 md:px-6 lg:px-8 bg-white/70 rounded-md sm:rounded-lg animate-pulse">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 py-4">
 
-      {/* Jobs Section */}
-      <div className="max-w-7xl mx-auto bg-amber-100 md:mt-4 mt-2 rounded-lg h-fit p-2 md:p-4">
-        <h1 className="text-lg md:text-3xl text-center text-orange-400 md:mb-4 underline">
-          Available Jobs
-        </h1>
+        <main className="lg:col-span-8">
+          {/* Header skeleton */}
+          <div className="flex items-center justify-between mb-6">
+            <div>
+              <div className="h-6 w-40 bg-gray-200 rounded-md mb-2 shimmer" />
+              <div className="h-4 w-60 bg-gray-200 rounded-md shimmer" />
+            </div>
+            <div className="hidden md:flex gap-2">
+              <div className="h-6 w-20 bg-gray-200 rounded-full shimmer" />
+              <div className="h-6 w-16 bg-gray-200 rounded-full shimmer" />
+            </div>
+          </div>
 
-        {/* Skeleton Loader */}
-        <div className="grid gap-y-4 md:grid-cols-1 md:gap-6 lg:grid-cols-2 xl:grid-cols-3 items-start justify-items-center-safe py-4 overflow-y-scroll">
-          {[...Array(9)].map((_, idx) => (
-            <div
-              key={idx}
-              className="w-72 md:w-[380px] h-[150px] bg-amber-100 animate-pulse rounded-sm md:rounded-lg p-4 flex flex-col gap-2 ring-1 ring-amber-300"
-            >
-              <div className="w-3/4 h-5 bg-amber-200 rounded"></div>
-              <div className="w-1/2 h-4 bg-amber-200 rounded"></div>
-              <div className="flex justify-between mt-4">
-                <div className="flex flex-col gap-2">
-                  <div className="w-20 h-3 bg-amber-200 rounded"></div>
-                  <div className="w-28 h-3 bg-amber-200 rounded"></div>
+
+          <div className="space-y-4">
+            {[...Array(4)].map((_, i) => (
+              <div
+                key={i}
+                className="bg-white/70 border border-gray-200 rounded-2xl shadow-sm p-4 md:p-5"
+              >
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div className="flex-1">
+                    <div className="h-5 w-3/4 bg-gray-200 rounded-md shimmer mb-2" />
+                    <div className="h-4 w-1/2 bg-gray-200 rounded-md shimmer" />
+                  </div>
+                  <div className="w-20 h-14 bg-gray-200 rounded-md shimmer" />
                 </div>
-                <div className="flex flex-col gap-2 items-end">
-                  <div className="w-24 h-3 bg-amber-200 rounded"></div>
-                  <div className="w-28 h-3 bg-amber-200 rounded"></div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3">
+                  <div className="flex gap-4">
+                    <div className="h-4 w-24 bg-gray-200 rounded shimmer" />
+                    <div className="h-4 w-20 bg-gray-200 rounded shimmer" />
+                  </div>
+                  <div className="flex justify-end gap-4">
+                    <div className="h-4 w-16 bg-gray-200 rounded shimmer" />
+                    <div className="h-4 w-20 bg-gray-200 rounded shimmer" />
+                  </div>
+                </div>
+
+                <div className="flex gap-2 mb-3">
+                  {[...Array(4)].map((_, j) => (
+                    <div key={j} className="h-5 w-12 bg-gray-200 rounded-md shimmer" />
+                  ))}
+                </div>
+
+                <div className="h-4 w-full bg-gray-200 rounded shimmer" />
+              </div>
+            ))}
+          </div>
+        </main>
+
+        <aside className="lg:col-span-4">
+          <div className="sticky top-20 space-y-4">
+            {/* Search card skeleton */}
+            <div className="bg-white/70 border border-slate-300 rounded-2xl p-4 shadow-sm">
+              <div className="h-5 w-32 bg-gray-200 rounded mb-4 shimmer" />
+              <div className="space-y-3">
+                <div className="h-9 bg-gray-200 rounded shimmer" />
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="h-9 bg-gray-200 rounded shimmer" />
+                  <div className="h-9 bg-gray-200 rounded shimmer" />
+                </div>
+                <div className="flex gap-2">
+                  <div className="flex-1 h-9 bg-gray-200 rounded shimmer" />
+                  <div className="w-16 h-9 bg-gray-200 rounded shimmer" />
                 </div>
               </div>
             </div>
-          ))}
-        </div>
+
+            {/* Stats skeleton */}
+            <div className="bg-white/70 border border-slate-300 rounded-2xl p-4 shadow-sm space-y-4">
+              <div className="h-5 w-24 bg-gray-200 rounded shimmer" />
+              <div className="flex justify-between items-center">
+                <div className="h-4 w-20 bg-gray-200 rounded shimmer" />
+                <div className="h-5 w-8 bg-gray-200 rounded shimmer" />
+              </div>
+
+              <div className="h-4 w-24 bg-gray-200 rounded shimmer mt-4" />
+              <div className="grid grid-cols-2 gap-2">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="h-8 bg-gray-200 rounded shimmer" />
+                ))}
+              </div>
+
+              <div className="h-4 w-28 bg-gray-200 rounded shimmer mt-4" />
+              <div className="flex gap-2 items-end h-16">
+                {[...Array(7)].map((_, i) => (
+                  <div
+                    key={i}
+                    className="flex-1 bg-gray-200 rounded-t shimmer"
+                    style={{ height: `${20 + i * 10}%` }}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {/* Quick actions skeleton */}
+            <div className="bg-white/70 border border-slate-300 rounded-2xl p-4 shadow-sm space-y-3">
+              <div className="h-5 w-24 bg-gray-200 rounded shimmer" />
+              <div className="h-9 bg-gray-200 rounded shimmer" />
+              <div className="h-9 bg-gray-200 rounded shimmer" />
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   );
 }
-
-export default loading;

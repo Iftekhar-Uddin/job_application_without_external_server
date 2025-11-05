@@ -29,18 +29,13 @@ const Signin = ({ csrfToken }: { csrfToken: string }) => {
     },
   });
 
-
   const onSubmit = async (data: z.infer<typeof loginFormSchema>) => {
-
     setIsSubmitting(true);
-
     await login(data, callbackUrl).then((res) => {
-
       if (res?.credentialsSuccess) {
         window.location.reload();
         setIsSubmitting(false);
       }
-
       if (res?.error) {
         reset();
         setError(res?.error)
@@ -63,16 +58,14 @@ const Signin = ({ csrfToken }: { csrfToken: string }) => {
     }).catch(() => setError("Something went wrong"));
 
     setIsSubmitting(false);
-
   }
 
-
   return (
-    <div className="grid grid-rows-1 mb-3 md:mb-0 gap-1 max-h-fit md:w-96 bg-amber-100 md:rounded-xl">
+    <div className="grid grid-rows-1 mb-3 md:mb-0 gap-1 max-h-fit md:w-96 bg-white/0 md:rounded-xl">
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
         {showTwoFactor ? (
           <>
-            <h1 className='text-center mx-auto text-orange-500 font-semibold mt-2'>Two Factor Verification!</h1>
+            <h1 className='text-center mx-auto text-slate-700 font-semibold mt-2'>Two Factor Verification!</h1>
             <div className="flex flex-col gap-2">
               <label className="text-sm md:text-base">
                 2FA Code
@@ -81,14 +74,15 @@ const Signin = ({ csrfToken }: { csrfToken: string }) => {
                 {...register("code")}
                 type="number"
                 placeholder="Enter your code"
-                className="w-full px-2 md:px-4 py-2 border text-sm md:text-base border-gray-300 rounded-lg focus:outline-none focus:ring-1 md:focus:ring-2 focus:ring-cyan-500"
+                className="w-full px-2 md:px-4 py-2 border text-sm md:text-base border-slate-500 rounded-lg focus:outline-none focus:ring-1 md:focus:ring-2 focus:ring-slate-500"
               />
               {/* {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>} */}
             </div>
+            <span className='text-emerald-500 bg-green-50/50 rounded-md text-center px-6 py-1'>A code has been sent your Email</span>
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`flex items-center justify-center ${isSubmitting ? "py-3 md:py-4" : "py-1.5 md:py-2 cursor-pointer disabled:cursor-not-allowed"} mt-0.5 md:text-lg bg-orange-500 text-white rounded-md transition-all`}
+              className={`flex items-center justify-center ${isSubmitting ? "py-3 md:py-4" : "py-1.5 md:py-2 cursor-pointer disabled:cursor-not-allowed"} mt-0.5 md:text-lg bg-slate-900 text-white rounded-md transition-all`}
             >
               {isSubmitting ? (
                 <span className="flex space-x-1.5">
@@ -112,7 +106,7 @@ const Signin = ({ csrfToken }: { csrfToken: string }) => {
                 {...register("email")}
                 type="email"
                 placeholder="Enter your email"
-                className="w-full px-4 py-2 border text-sm md:text-base border-gray-300 rounded-lg focus:outline-none focus:ring-1 md:focus:ring-2 focus:ring-cyan-500"
+                className="w-full px-4 py-2 border text-sm md:text-base border-slate-700 rounded-lg focus:outline-none focus:ring-1 md:focus:ring-1 focus:ring-slate-500"
               />
               {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
             </div>
@@ -124,9 +118,9 @@ const Signin = ({ csrfToken }: { csrfToken: string }) => {
                 {...register("password")}
                 type="password"
                 placeholder="Enter your password"
-                className="w-full px-4 py-2 border text-sm md:text-base border-gray-300 rounded-lg focus:outline-none focus:ring-1 md:focus:ring-2 focus:ring-cyan-500"
+                className="w-full px-4 py-2 border text-sm md:text-base border-slate-700 rounded-lg focus:outline-none focus:ring-1 md:focus:ring-1 focus:ring-slate-500"
               />
-              <div className='flex gap-0.5 text-xs md:text-sm'><p className='text-orange-600'>Forgot password?</p><Link className='text-blue-600' href="/auth/reset">Reset</Link></div>
+              <Link className='text-orange-500 text-sm' href="/auth/reset">Forgot password?</Link>
               {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
             </div>
             {error && <div className='flex items-center justify-center'><p className="text-red-600 bg-red-200 rounded-md text-center px-6 py-1">{error || urlError}</p></div>}
@@ -134,7 +128,7 @@ const Signin = ({ csrfToken }: { csrfToken: string }) => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className={`flex items-center justify-center ${isSubmitting ? "py-3 md:py-4" : "py-1.5 md:py-2 cursor-pointer disabled:cursor-not-allowed"} mt-0.5 md:text-lg bg-orange-500 text-white rounded-md transition-all`}
+              className={`flex items-center justify-center ${isSubmitting ? "py-3 md:py-4" : "py-1.5 md:py-2 cursor-pointer disabled:cursor-not-allowed"} mt-0.5 md:text-lg bg-slate-700 hover:bg-black text-white rounded-md transition-all`}
             >
               {isSubmitting ? (
                 <span className="flex space-x-1.5">
@@ -146,12 +140,8 @@ const Signin = ({ csrfToken }: { csrfToken: string }) => {
                 'Sign In'
               )}
             </button>
-
-            {/* <button type="submit" className="rounded-md w-full mt-0.5 py-2 md:py-2.5 md:text-lg bg-black text-white cursor-pointer">{isSubmitting ? "Sign In..." : 'Sign In'}</button> */}
           </>
-        )
-        }
-
+        )}
       </form>
       <div className="flex min-w-full justify-center">
         <p className="w-full text-xs md:text-sm text-end text-gray-600">
@@ -165,7 +155,6 @@ const Signin = ({ csrfToken }: { csrfToken: string }) => {
   )
 }
 export default Signin;
-
 
 export const getServerSideProps: GetServerSideProps = async () => {
   const csrfToken = await getCsrfToken();

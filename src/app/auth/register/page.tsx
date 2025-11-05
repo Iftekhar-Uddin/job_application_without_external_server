@@ -18,19 +18,19 @@ const page = () => {
 
 
   return (
-    <div className="flex justify-center items-center min-h-[500px]">
-      <div className="grid grid-rows-1 md:gap-4 max-h-fit w-auto bg-amber-100 p-4 md:p-8 rounded-md md:rounded-xl">
-        <div className="flex flex-col items-center">
-          <h1 className="text-orange-500 font-light md:font-bold text-xl md:text-4xl">
+    <div className="flex justify-center items-center min-h-[615px]">
+      <div className="grid grid-rows-1 md:gap-4 max-h-fit w-auto bg-white/70 p-4 md:p-8 rounded-md md:rounded-xl">
+        <div className="flex flex-col items-center ">
+          <h1 className= "font-light md:font-bold text-2xl md:text-4xl">
             Welcome to job portal
           </h1>
-          <div className="flex text-sm md:text-base text-center">
+          <div className="flex text-sm md:text-base text-center text-slate-500">
             Sign in to post jobs
             <br />
             <div className="flex items-center gap-2">
-              <div className="h-px bg-borderGray flex-grow"></div>
+              <div className="h-px bg-borderGray grow"></div>
               <span className="text-textGrayLight">or</span>
-              <div className="h-px bg-borderGray flex-grow"></div>
+              <div className="h-px bg-borderGray grow"></div>
             </div>
             <br />
             Apply for opportunity

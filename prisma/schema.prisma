@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
@@ -7,7 +7,6 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 
 model Account {
   id                String  @id @default(cuid())
@@ -22,31 +21,38 @@ model Account {
   scope             String?
   id_token          String? @db.Text
   session_state     String?
-
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-
   @@unique([provider, providerAccountId])
 }
+
 
 enum UserRole {
   Admin
   User
+  Manager
 }
 
 model User {
-  id String @id @default(cuid())
-  name String?
-  email String? @unique
-  emailVerified DateTime?
-  password String? @db.Text // Store hashed password
-  image String?
-  role UserRole @default(User)
-  isTwoFactorEnabled Boolean @default(true)
+  id                    String                 @id @default(cuid())
+  name                  String?
+  email                 String?                @unique
+  emailVerified         DateTime?
+  password              String?                @db.Text
+  image                 String?
+  education             String?
+  skills                String[]              @default([])
+  experience            String?
+  previousInstitution   String?
+  address               String?
+  isTwoFactorEnabled    Boolean                @default(false)
+  role                  UserRole               @default(User)
   twoFactorConfirmation TwoFactorConfirmation?
-  accounts Account[]
-  sessions Session[]
-  jobs Job[] @relation("PostedJobs")
-  applications Application[]
+  accounts              Account[]
+  sessions              Session[]
+  jobs                  Job[]                  @relation("PostedJobs")
+  applications          Application[]
+  createdAt             DateTime               @default(now())
+  updatedAt             DateTime               @updatedAt
 }
 
 model Session {
@@ -54,11 +60,11 @@ model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
-  identifier String @id @default(cuid())
+  identifier String   @id @default(cuid())
   email      String
   token      String   @unique
   expires    DateTime
@@ -67,7 +73,7 @@ model VerificationToken {
 }
 
 model PasswordResetToken {
-  identifier String @id @default(cuid())
+  identifier String   @id @default(cuid())
   email      String
   token      String   @unique
   expires    DateTime
@@ -76,7 +82,7 @@ model PasswordResetToken {
 }
 
 model TwoFactorToken {
-  identifier String @id @default(cuid())
+  identifier String   @id @default(cuid())
   email      String
   token      String   @unique
   expires    DateTime
@@ -85,57 +91,96 @@ model TwoFactorToken {
 }
 
 model TwoFactorConfirmation {
-  id String @id @default(cuid())
+  id     String @id @default(cuid())
   userId String
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([userId])
 }
 
-model Job {
-  id String @id @default(cuid())
-  title String
-  company String
-  location String
-  type String
-  responsibilities String? @db.Text
-  salary String?
-  experience String?
-  vacancies Int?
-  skills String?
-  education String?
-  benefits String[] @db.Text
-  jobplace String?
-  lat Float?
-  lng Float?
-  postedAt DateTime @default(now())
-  deadline DateTime?
-  postedBy User @relation("PostedJobs", fields: [postedById], references: [id])
-  postedById String
+enum JobStatus {
+  PENDING
+  PUBLISHED
+  REJECTED
+}
 
-  applications Application[]
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  REFUNDED
+  CANCELLED
+}
+
+enum PaymentProvider {
+  STRIPE
+  SSLCOMMERZ
+  ADMIN
+}
+
+model Job {
+  id               String    @id @default(cuid())
+  title            String
+  company          String
+  logo             String?
+  website          String?
+  location         String
+  type             String
+  responsibilities String?   @db.Text
+  salary           String?
+  experience       String?
+  vacancies        Int
+  skills           String?
+  education        String?
+  benefits         String[]  @db.Text
+  jobplace         String?
+  lat              Float?
+  lng              Float?
+  deadline         DateTime?
+  postedById       String
+  postedAt         DateTime  @default(now())
+  postedBy         User      @relation("PostedJobs", fields: [postedById], references: [id])
+  updatedAt        DateTime  @updatedAt
+  status           JobStatus @default(PENDING) // PENDING | PUBLISHED | REJECTED
+  payments         Payment[] @relation("JobPayments")
+  applications     Application[]
   // locations Location[]
 }
 
+
+model Payment {
+  id        String   @id @default(uuid())
+  jobId     String
+  tranId    String?
+  amount    Float
+  meta      Json?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  status    PaymentStatus @default(PENDING)  // PENDING | SUCCESS | FAILED | REFUNDED | CANCELLED
+  provider  PaymentProvider   // stripe | sslcommerz
+  currency  String  @default("BDT")
+  job       Job     @relation(fields: [jobId], references: [id], name: "JobPayments")
+}
+
 model Application {
-  id String @id @default(cuid())
-  jobId String
-  userId String
-  status String @default("PENDING") // REVIEWING, ACCEPTED, REJECTED
+  id        String   @id @default(cuid())
+  jobId     String
+  userId    String
+  status    String   @default("PENDING") // REVIEWING, ACCEPTED, REJECTED
   appliedAt DateTime @default(now())
 
   user User @relation(fields: [userId], references: [id])
-  job Job @relation(fields: [jobId], references: [id])
-
+  job  Job  @relation(fields: [jobId], references: [id])
   @@unique([jobId, userId])
 }
 
 model Notification {
   id         String   @id @default(uuid())
   receiverId String
-  senderId   String?       
+  senderId   String?
   title      String
   body       String
-  data       Json?         
+  data       Json?
   isRead     Boolean  @default(false)
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt

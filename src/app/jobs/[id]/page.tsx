@@ -4,10 +4,15 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import ApplyButton from "./ApplyButton";
 import { formatDistanceToNow } from "date-fns";
+import {
+  MapPin,
+  CalendarClock,
+  BrainCog,
+  DollarSign,
+  Briefcase,
+} from "lucide-react";
 
-
-const jobDetails = async ({ params }: { params: Promise<{ id: string }> }) => {
-
+const JobDetails = async ({ params }: { params: Promise<{ id: string }> }) => {
   const jobId = (await params).id;
 
   const job = await prisma.job.findUnique({
@@ -15,117 +20,125 @@ const jobDetails = async ({ params }: { params: Promise<{ id: string }> }) => {
     include: { postedBy: true },
   });
 
-  if (!job) {
-    notFound();
-  }
+  if (!job) notFound();
 
   return (
-    <div className="bg-amber-100 max-w-7xl mx-auto h-fit rounded-lg ">
-      <div className="p-6 grid grid-rows-1 gap-y-4 w-full">
-        <div className="flex justify-between">
-          <Link
-            href={"/jobs"}
-            className="cursor-pointer text-cyan-800 underline"
-          >
-            Goto Back
-          </Link>
-          <h2 className="text-red-400">Deadline: {new Date(job?.deadline as Date).toLocaleDateString('en-GB')}</h2>
-        </div>
-
-        <div className="flex w-full">
-          <div className="flex flex-col">
-            <h1 className="text-lg md:text-xl font-semibold text-orange-500">
-              {job.title}
-            </h1>
-            <p className="text-blue-400 text-sm md:text-base">
-              {job.company}
-            </p>
-            <div className="md:flex justify-between pt-4">
-              <div className="md:space-y-2 md:w-1/2 font-sans space-y-1">
-                <p className="md:font-semibold md:text-lg text-gray-600">
-                  <span>Vacancy: </span>
-                  {job?.vacancies}
-                </p>
-                <p className="md:font-semibold md:text-lg text-green-500">
-                  <span>Employment Status: </span>
-                  {job.type}
-                </p>
-                <p className="md:font-semibold md:text-lg">
-                  <span>Salary: </span>
-                  {job.salary} /=
-                </p>
-              </div>
-              <div className="md:space-y-2 space-y-1 mt-1 md:w-1/2 font-sans">
-                <p className="md:font-semibold md:text-lg">
-                  <span>Education: {job?.education} </span>
-                </p>
-                <p className="md:font-semibold text-red-400 md:text-lg">
-                  <span>Experience: {job?.experience ? job?.experience : "No Need"} </span>
-                </p>
-                <p className="text-[min(10vw, 120px)] text-gray-600 ">
-                  <span className="underline underline-offset-2 text-blue-400 md:font-semibold">Requirement Skills:</span>
-                  &nbsp;{job?.skills}
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <p className="pt-2 grid-cols-1 grid text-gray-700 font-sans text-justify md:text-base">
-          <span className="font-semibold md:text-lg mb-1 ">Responsibilities & Context: </span>
-          {job?.responsibilities}
-        </p>
-        <p className="text-orange-500 md:font-semibold">
-          <span className="">Workplace: </span>
-          {job?.jobplace}
-        </p>
-        <ul>
-          <p className="md:font-semibold md:text-lg text-teal-500 mb-1">Compansation & Others:</p>
-          {job?.benefits.map((single) =>
-            <li key={single} className="text-gray-600 list-inside list-disc">{single}</li>)}
-        </ul>
-        <div className="md:flex justify-between items-center font-sans">
-
-          {/* <div className="w-2/5 flex justify-end">
-            <div className="">
-              {job.postedBy.image && (
-                <Image
-                  className="size-32"
-                  src={job.postedBy.image}
-                  height={650}
-                  width={366}
-                  alt=""
-                  priority={!!getPriority}
-                />
-              )}
-              <p className="font-sans text-xs">
-                <span className="">PostedBy: </span>
-                {job?.postedBy?.name}
-              </p>
-            </div>
-          </div> */}
-
-          <p className="text-gray-600">
-            <span className="font-semibold">Location: </span>
-            {job.location}
-          </p>
-          <p className="text-gray-600">
-            <span className="font-semibold">Published: </span>
-            {formatDistanceToNow(new Date(job?.postedAt), { addSuffix: true })}
-          </p>
-          <p className="text-gray-600 text-sm">
-            <span className="font-semibold">PostedBy: </span>
-            {job?.postedBy?.name} &nbsp;
-          </p>
-        </div>
-
-        <div className="flex justify-end">
-          <ApplyButton jobId={job.id} />
-        </div>
-
+    <section className="max-w-7xl mx-auto px-4 py-4 bg-white/70 rounded-xl shadow-sm border border-gray-400">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4">
+        <Link
+          href="/jobs"
+          className="text-cyan-700 text-sm hover:text-cyan-900 underline underline-offset-2"
+        >
+          Back to Jobs
+        </Link>
+        <h2 className="text-sm sm:text-base text-red-500 font-semibold mt-2 sm:mt-0">
+          Deadline:{" "}
+          <span className="font-bold">
+            {new Date(job.deadline as Date).toLocaleDateString("en-GB")}
+          </span>
+        </h2>
       </div>
-    </div>
+
+      <div className="flex flex-col sm:flex-row gap-2 items-start sm:items-center">
+        {job.logo && (
+          <div className="relative w-20 h-20 sm:w-24 sm:h-24 border border-gray-300 rounded-lg overflow-hidden">
+            <Image
+              src={job?.logo}
+              alt={`${job?.company} logo`}
+              fill
+              className="object-contain p-2"
+              priority
+            />
+          </div>
+        )}
+
+        <div className="flex-1">
+          <h1 className="text-xl sm:text-2xl font-bold text-orange-600">
+            {job.title}
+          </h1>
+          <p className="text-blue-500 font-medium text-sm sm:text-base">
+            {job.company}
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-gray-700 font-sans">
+        <div className="space-y-1">
+          <p className="flex items-center gap-1">
+            <Briefcase size={16} className="text-blue-500" />
+            <span className="font-semibold">Vacancy:</span> {job.vacancies}
+          </p>
+          <p className="flex items-center gap-1">
+            <Briefcase size={16} className="text-green-600" />
+            <span className="font-semibold">Employment Status:</span>{" "}
+            {job.type}
+          </p>
+          <p className="flex items-center gap-1">
+            <DollarSign size={16} className="text-green-600" />
+            <span className="font-semibold">Salary:</span> {job.salary || "—"}
+          </p>
+        </div>
+
+        <div className="space-y-1">
+          <p className="flex items-center gap-1">
+            <MapPin size={16} className="text-red-500" />
+            <span className="font-semibold">Location:</span> {job.location}
+          </p>
+          <p className="flex items-center gap-1 text-red-500">
+            <BrainCog size={16} className="text-blue-500" />
+            <span className="font-semibold">Experience:</span>{" "}
+            {job.experience || "Not Required"}
+          </p>
+          <p className="text-sm sm:text-base">
+            <span className="underline text-blue-600 font-semibold">
+              Required Skills:
+            </span>{" "}
+            {job.skills}
+          </p>
+        </div>
+      </div>
+
+      <div className="mt-4">
+        <h3 className="font-semibold text-lg text-gray-800">
+          Responsibilities & Context:
+        </h3>
+        <p className="text-gray-700 text-justify leading-relaxed">
+          {job.responsibilities}
+        </p>
+      </div>
+
+      <div className="mt-4">
+        <h3 className="font-semibold text-lg text-teal-600">
+          Compensation & Benefits
+        </h3>
+        <ul className="list-disc list-inside text-gray-700">
+          {job.benefits.map((b) => (
+            <li key={b}>{b}</li>
+          ))}
+        </ul>
+      </div>
+
+      <div className="mt-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-sm text-gray-600">
+        <p>
+          <span className="font-semibold">Workplace:</span> {job.jobplace}
+        </p>
+        <p>
+          <span className="font-semibold">Published:</span>{" "}
+          {formatDistanceToNow(new Date(job.postedAt), { addSuffix: true })}
+        </p>
+        <p>
+          <span className="font-semibold">Posted By:</span>{" "}
+          {job.postedBy?.name || "Unknown"}
+        </p>
+      </div>
+
+      <div className="flex justify-end mt-4">
+        <ApplyButton
+          jobId={job.id}
+        />
+      </div>
+    </section>
   );
 };
 
-export default jobDetails;
+export default JobDetails;

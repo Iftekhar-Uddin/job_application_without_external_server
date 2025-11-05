@@ -6,19 +6,51 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@keyframes gradient-slow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
 }
+
+.animate-gradient-slow {
+  animation: gradient-slow 10s ease-in-out infinite;
+}
+
+
+/*Used Dashboard skill section */
+@keyframes colorCycle {
+  0% {
+    filter: brightness(100%);
+    transform: scale(1);
+  }
+  50% {
+    filter: brightness(120%);
+    transform: scale(1.05);
+  }
+  100% {
+    filter: brightness(100%);
+    transform: scale(1);
+  }
+}
+
+.animate-colorCycle {
+  animation: colorCycle 3s ease-in-out infinite;
+}
+
 
 /* Hide scrollbar but keep scrolling */
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
 .scrollbar-hide {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;      /* Firefox */
+  -ms-overflow-style: none; 
+  scrollbar-width: none;  
 }
 
 ::-webkit-scrollbar {
@@ -26,14 +58,57 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #fff3e0; /* light amber background */
+  background: #dddddd;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #f5ad7a; /* orange-500 */
+  background-color: #c5c5c5;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: #f79560; /* darker on hover */
+  background-color: #f5f1ee;
+}
+
+
+@keyframes colorCycle {
+  0% { background-color: #fecaca; color: #b91c1c; }
+  25% { background-color: #bfdbfe; color: #1d4ed8; }  
+  50% { background-color: #bbf7d0; color: #15803d; }  
+  75% { background-color: #fef9c3; color: #a16207; } 
+  100% { background-color: #000000; color: #ffffff; } 
+}
+
+.animate-colorCycle {
+  animation: colorCycle 6s linear infinite;
+}
+
+
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-shimmer {
+  position: relative;
+  overflow: hidden;
+  background-color: #e2e8f0;
+}
+
+.animate-shimmer::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.6),
+    transparent
+  );
+  animation: shimmer 1.6s infinite;
 }

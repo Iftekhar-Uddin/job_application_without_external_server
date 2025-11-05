@@ -1,77 +1,168 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import { MapPin, BrainCog, Handshake, CalendarClock, DollarSign } from "lucide-react";
 
 export default async function Home() {
+
   const recentJobs = await prisma.job.findMany({
     take: 3,
-    orderBy: {
-      postedAt: "desc",
-    },
+    orderBy: { postedAt: "desc" },
     include: {
-      postedBy: {
-        select: {
-          name: true,
-        },
-      },
+      postedBy: { select: { name: true } },
     },
   });
 
+  const today = new Date();
+  const Jobs = recentJobs.filter((job) => new Date(job.deadline as Date) > today && job.status === "PUBLISHED");
+
+
   return (
-    <div className="mx-auto md:space-y-12 max-w-7xl">
-      {/* Hero Section */}
-      <section className="text-center py-1 md:py-16 bg-amber-100 rounded-sm md:rounded-lg shadow-sm ring-1 ring-orange-300">
-        <h1 className="text-lg md:text-3xl font-semibold md:font-bold text-orange-500 md:mb-4">
-          Find Your Dream Job
-        </h1>
-        {/* <hr className="my-2 h-px border-t-0 bg-transparent bg-gradient-to-r from-transparent via-blue-500 to-transparent opacity-50 dark:via-neutral-400 z-0" /> */}
-        <p className="text-sm md:text-xl mb-2 md:mb-8">
-          Discover thousands of job opportunities with top companies
-        </p>
-        <Link
-          href="/jobs"
-          className="bg-black text-white px-3 md:px-6 py-1 md:py-3 rounded-sm md:rounded-md text-sm md:text-lg font-medium"
-        >
-          Browse Jobs
-        </Link>
+    <div className="mx-auto max-w-7xl space-y-4 md:space-y-6 z-0">
+      <section
+        className="relative bg-cover bg-center rounded-lg shadow-md overflow-hidden"
+        style={{
+          backgroundImage:
+            "url('https://images.unsplash.com/photo-1522202195465-dc3bd9c65b6f?auto=format&fit=crop&w=1600&q=80')",
+        }}
+      >
+        <div className="absolute inset-0 bg-linear-to-r from-black/70 to-black/40"></div>
+        <div className="relative text-center py-4 md:py-20 px-4">
+          <h1
+            className="text-3xl md:text-5xl font-bold mb-4 leading-tight bg-linear-to-r from-blue-400 via-green-400 to-orange-400 bg-size-[300%_300%] animate-gradient-slow bg-clip-text text-transparent">
+            Find Your Next Opportunity
+          </h1>
+
+          <p className="text-lg md:text-xl md:mb-8 max-w-2xl mx-auto bg-linear-to-r from-blue-400 via-green-400 to-orange-400 bg-size-[300%_300%] animate-gradient-slow bg-clip-text text-transparent">
+            Explore thousands of job openings, connect with leading employers, and
+            take the next step in your career.
+          </p>
+        </div>
       </section>
 
-      {/* Recent Jobs Section */}
       <section>
-        <div className="grid gap-2 md:gap-6 md:grid-cols-2 lg:grid-cols-3 mt-2 md:mt-4">
-          {recentJobs.map((job) => (
-            <div
-              // href={`/jobs/${job.id}`}
+        <div className="flex justify-between items-center mb-2 md:mb-6">
+          <h2 className="text-xl md:text-3xl font-bold rounded-md text-white/70">
+            Latest Job Openings
+          </h2>
+
+        </div>
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {Jobs.map((job) => (
+            <Link
               key={job.id}
-              className="p-2 md:p-6 rounded-sm md:rounded-lg shadow-sm hover:shadow-md md:disabled transition-shadow bg-amber-100"
+              href={`/jobs/${job.id}`}
+              className="group relative block bg-white border border-gray-100 rounded-xl shadow-sm  transition-all duration-500 ease-out transform hover:-translate-y-2 hover:shadow-xl hover:rotate-[0.5deg] hover:scale-[1.02] overflow-hidden before:absolute before:inset-0 before:bg-linear-to-r before:from-slate-100 before:to-amber-50 before:-translate-x-full hover:before:translate-x-0 before:transition-transform before:duration-500 before:ease-out bg-linear-to-r from-blue-50 via-green-50 to-orange-50"
             >
-              <h3 className="md:text-xl font-semibold text-orange-500">
-                {job.title}
-              </h3>
-              <p className="text-emerald-600 md:mb-2 text-xs">{job.company}</p>
-              <div className="flex text-sm md:text-base my-2 md:min-h-12">
-                <span className="mr-2 text-blue-500">{job.location}</span>
-                <div className="inline-block h-[19px] md:h-[22px] min-h-[0.5em] w-0.5 self-stretch bg-neutral-400 dark:bg-white/10"></div>
-                <span className="ml-2 text-red-500">{job.type}</span>
+              <div className="relative z-10 flex flex-col h-full p-5">
+                
+                <div className="flex items-center gap-1.5 mb-2">
+                  <h3 className="text-lg font-semibold text-gray-800 group-hover:text-orange-600 transition">
+                    {job.title}
+                  </h3>
+                  <p className="text-sm text-gray-600">({job.company})</p>
+                </div>
+                <div className="space-y-1 text-sm text-gray-600 mb-4">
+
+                  <div className="flex justify-between items-center">
+                    <span className="flex items-center gap-1">
+                      <MapPin size={16} className="text-red-500" />
+                      <span>{job.location}</span>
+                    </span>
+
+                    <p className="flex items-center gap-1">
+                      <Handshake size={16} className="text-blue-500" />
+                      <span>
+                        <span className="font-medium">{job.type}</span>
+                      </span>
+                    </p>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <div className="space-y-1">
+                      {job.salary && (
+                        <p className="flex items-center gap-1">
+                          <DollarSign size={16} className="text-green-600" />
+                          <span>
+                            Salary: <span className="font-medium">{job.salary}</span>
+                          </span>
+                        </p>
+                      )}
+                      {job.experience && (
+                        <p className="flex items-center gap-1">
+                          <BrainCog size={16} className="text-blue-500" />
+                          <span>
+                            Experience:{" "}
+                            <span className="font-medium">{job.experience}</span>
+                          </span>
+                        </p>
+                      )}
+                      {job.deadline && (
+                        <p className="flex items-center gap-1">
+                          <CalendarClock size={16} className="text-red-500" />
+                          <span>
+                            Deadline:{" "}
+                            <span className="font-medium text-red-600">
+                              {new Date(job.deadline).toLocaleDateString()}
+                            </span>
+                          </span>
+                        </p>
+                      )}
+                    </div>
+
+                    <div>
+                      {job.logo ? (
+                        <img
+                          src={job.logo}
+                          alt={job.company}
+                          className="w-24 h-16 rounded-md object-cover border border-gray-200"
+                        />
+                      ) : (
+                        <div className="w-24 h-16 bg-orange-100 border border-orange-200 rounded-md flex items-center justify-center text-orange-600 font-semibold text-3xl">
+                          {job.company.charAt(0)}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* {job.skills && (
+                  <div className="flex flex-wrap gap-1 mb-2">
+                    {job.skills
+                      .split(",")
+                      .slice(0, 4)
+                      .map((skill) => (
+                        <span
+                          key={skill}
+                          className="bg-gray-100 text-gray-600 text-xs font-medium px-2 py-1 rounded-md"
+                        >
+                          #{skill.trim()}
+                        </span>
+                      ))}
+                  </div>
+                )} */}
+
+                <div className="mt-auto flex items-center justify-between border-t pt-3">
+                  <p className="text-xs text-blue-400">
+                    Posted {new Date(job.postedAt).toLocaleDateString()}
+                  </p>
+                  <span className="text-orange-600 text-sm font-medium hover:underline hidden md:inline">
+                    View Details →
+                  </span>
+                </div>
               </div>
-              <p className="text-sm md:text-base md:mb-4 line-clamp-2">
-                {job?.responsibilities}
-              </p>
-              <Link href={`/jobs/${job.id}`}
-                className="text-gray-500 text-xs md:text-base flex justify-end hover:text-gray-800 font-medium mt-2"
-              >
-                View Details →
-              </Link>
-            </div>
+            </Link>
           ))}
         </div>
-        <div className="text-center mt-2 md:mt-8">
+
+        <div className="text-center md:text-right mt-10">
           <Link
             href="/jobs"
-            className="text-white md:text-xl font-medium hover:text-amber-100"
+            className="inline-block bg-linear-to-r from-blue-300 via-green-300 to-orange-300 px-8 py-3 rounded-md font-semibold shadow-md transition-all duration-300"
           >
-            View All Jobs →
+            Explore All Jobs →
           </Link>
         </div>
+
       </section>
     </div>
   );

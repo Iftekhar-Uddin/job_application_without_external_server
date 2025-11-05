@@ -5,12 +5,21 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "**",
-        // port: "",
-        // pathname: "/images/**",
+        hostname: "**"
+      },
+            {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
+      {
+        protocol: 'http',
+        hostname: 'res.cloudinary.com',
+        port: '',
+        pathname: '/**',
       },
     ],
-    // You can add other options here, like deviceSizes, imageSizes, etc.
+    // Here can be add other options, like deviceSizes, imageSizes, etc.
   },
   experimental: {
     serverActions: {

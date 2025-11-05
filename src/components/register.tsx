@@ -59,7 +59,7 @@ const SignUp = () => {
 
     return (
 
-        <div className="grid grid-rows-1 mb-3 md:mb-0 gap-1 max-h-fit md:w-96 bg-amber-100 md:rounded-xl">
+        <div className="grid grid-rows-1 mb-3 md:mb-0 gap-1 max-h-fit md:w-96 md:rounded-xl">
             <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-2">
                 <div className="flex flex-col gap-1">
                     <label className="text-sm md:text-base font-medium text-gray-700">
@@ -69,7 +69,7 @@ const SignUp = () => {
                         {...register("name", { required: "Name is required" })}
                         type="text"
                         placeholder="Enter your full name"
-                        className="w-full px-4 py-2 border text-sm md:text-base border-gray-300 rounded-lg focus:outline-none focus:ring-1 md:focus:ring-2 focus:orange-500"
+                        className="w-full px-4 py-2 border text-sm md:text-base border-slate-500 rounded-lg focus:outline-none focus:ring-1 focus:orange-500"
                     />
                     {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
                 </div>
@@ -88,7 +88,7 @@ const SignUp = () => {
                         })}
                         type="email"
                         placeholder="Enter your email"
-                        className="w-full px-4 py-2 border text-sm md:text-base border-gray-300 rounded-lg focus:outline-none focus:ring-1 md:focus:ring-2 focus:orange-500"
+                        className="w-full px-4 py-2 border text-sm md:text-base border-slate-500 rounded-lg focus:outline-none focus:ring-1 focus:orange-500"
                     />
                     {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
                 </div>
@@ -107,7 +107,7 @@ const SignUp = () => {
                         })}
                         type="password"
                         placeholder="Create a password"
-                        className="w-full px-4 py-2 border text-sm md:text-base border-gray-300 rounded-lg focus:outline-none focus:ring-1 md:focus:ring-2 focus:orange-500"
+                        className="w-full px-4 py-2 border text-sm md:text-base border-slate-500 rounded-lg focus:outline-none focus:ring-1 focus:orange-500"
                     />
                     {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
                 </div>
@@ -122,7 +122,7 @@ const SignUp = () => {
                         })}
                         type="password"
                         placeholder="Confirm your password"
-                        className="w-full px-4 py-2 border text-sm md:text-base border-gray-300 rounded-lg focus:outline-none focus:ring-1 md:focus:ring-2 focus:orange-500"
+                        className="w-full px-4 py-2 border text-sm md:text-base border-slate-500 rounded-lg focus:outline-none focus:ring-1 focus:orange-500"
                     />
                     {errors.confirmPassword && <p className="text-red-500 text-sm">{errors.confirmPassword.message}</p>}
                 </div>
@@ -134,14 +134,14 @@ const SignUp = () => {
                 )}
                 {success && (
                     <div className="flex items-center justify-center">
-                        <p className="text-emerald-600 bg-emerald-200 rounded-md text-center px-6 py-1">{success}</p>
+                        <p className="text-emerald-500 bg-green-50/50 rounded-md text-center px-6 py-1">{success}</p>
                     </div>
                 )}
 
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`flex items-center justify-center ${isSubmitting ? "py-3 md:py-4" : "py-1.5 md:py-2 cursor-pointer disabled:cursor-not-allowed"} mt-0.5 md:text-lg bg-orange-500 text-white rounded-md transition-all`}
+                    className={`flex items-center justify-center ${isSubmitting ? "py-3 md:py-4" : "py-1.5 md:py-2 cursor-pointer disabled:cursor-not-allowed"} mt-0.5 md:text-lg bg-slate-700 hover:bg-black text-white rounded-md transition-all`}
                 >
                     {isSubmitting ? (
                         <span className="flex space-x-1.5">
@@ -168,3 +168,4 @@ const SignUp = () => {
     );
 };
 export default SignUp;
+

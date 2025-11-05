@@ -1,291 +1,270 @@
 "use client";
+
 import { useSession } from "next-auth/react";
-import { redirect } from "next/navigation";
-import { FormEvent } from "react";
+import { redirect, useRouter } from "next/navigation";
+import { FormEvent, useState } from "react";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
+import { saveDraftJob } from "@/redux/jobSlice/jobSlice";
+import { CldUploadWidget } from "next-cloudinary";
 
 async function geocodeAddress(address: string) {
-  // const apikey = process.env.GOOGLE_MAPS_API_KEY;
-  // const response = await fetch(
-  //   `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
-  //     address
-  //   )}&key=${apikey}`
-  // );
-  // const data = await response.json();
-  // console.log(data)
-  // const {lat, lng} = data?.result[0]?.geometry?.location;
   const lat = 20;
-  const lng = 30
-  return { lat, lng }
+  const lng = 30;
+  return { lat, lng };
 }
 
-const PostYourJob = (e:any) => {
+export default function PostYourJob() {
+  const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
   const { data: session, status } = useSession();
+  const [logoUrl, setLogoUrl] = useState<string>("");
 
-  if (status === "unauthenticated") {
-    redirect("/auth/signin")
-  }
+  if (status === "unauthenticated") redirect("/auth/signin");
+  if (!session) return null;
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     const formData = new FormData(e.currentTarget);
     const location = formData.get("location")?.toString();
     const { lat, lng } = await geocodeAddress(location as string);
     const deadlineTime = formData.get("deadline");
     const finalDeadline = new Date(deadlineTime as string);
-    finalDeadline.setHours(23, 59, 59, 999); // Set to the end of the day (11:59:59.999 PM)
-    // console.log(finalDeadline.toISOString());
-    // const jobplace = formData.get("jobplace");
-    // const benefits = formData.getAll("benefits");
-    // const experience = formData.get("experience");
-    // const requirements = `Skills: ${formData.get("skills")}, Education: ${formData.get("education")}, Vacancies: ${formData.get("vacancies")}`;
-    // const salary = formData.get("salary")?.toString() || "Not disclosed";
-
+    finalDeadline.setHours(23, 59, 59, 999);
 
     const data = {
-      title: formData.get("title"),
-      company: formData.get("company"),
-      type: formData.get("type"),
-      responsibilities: formData.get("responsibilities"),
-      skills: formData.get("skills"),
-      jobplace : formData.get("jobplace"),
-      benefits : formData.getAll("benefits"),
-      vacancies: formData.get("vacancies" as string) ? parseInt(formData.get("vacancies") as string) : 0,
-      education: formData.get("education"),
-      salary: formData.get("salary"),
-      location: formData.get("location"),
-      experience: formData.get("experience"),
-      deadline: finalDeadline,
-      lat: lat,
-      lng: lng
+      title: formData.get("title") as string,
+      company: formData.get("company") as string,
+      type: formData.get("type") as string,
+      website: formData.get("website") as string,
+      logo: logoUrl,
+      responsibilities: formData.get("responsibilities") as string,
+      skills: formData.get("skills") as string,
+      jobplace: formData.get("jobplace") as string,
+      benefits: formData.getAll("benefits") as string[],
+      vacancies: formData.get("vacancies") ? parseInt(formData.get("vacancies") as string) : 1,
+      education: formData.get("education") as string,
+      salary: formData.get("salary") as string,
+      experience: formData.get("experience") as string,
+      deadline: finalDeadline.toISOString(),
+      location,
+      lat,
+      lng,
     };
 
-    try {
-      await fetch("/api/job", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      window.location.href = "/jobs";
-    } catch (err) {
-      console.log(err);
-    }
+    dispatch(saveDraftJob(data));
+    router.push("post/submit");
   };
 
+  return (
+    <div className="flex justify-center items-center h-[calc(100vh-6rem)] sm:h-[calc(100vh-9rem)] mt-4 sm:mt-8">
+      <div className="w-full max-w-3xl bg-white/70 backdrop-blur-xl ring-1 ring-gray-700 rounded-md sm:rounded-lg shadow-lg px-6 py-2">
 
-  {if(session){
-    return (
-    <div className="flex justify-center items-center min-h-[calc(100vh-10rem)]">
-      <div className="min-w-xxs w-lg mx-auto md:p-4 bg-amber-100 rounded-md md:rounded-xl ring-1 ring-orange-500">
-        <h1 className="md:text-2xl font-bold text-orange-500 ml-2 mt-2">Create a job post</h1>
-        <div className="h-[calc(100vh-8rem)] md:h-[calc(100vh-14rem)] overflow-y-auto p-4 scrollbar-thin scrollbar-thumb-orange-500 scrollbar-track-amber-100">
+        <h1 className="text-lg md:text-2xl font-bold  mb-4 text-center md:text-left">
+          Create a Job Post
+        </h1>
 
-          <form className="space-y-1.5 md:space-y-4" onSubmit={handleSubmit}>
+        <div className="max-h-[calc(100vh-9rem)] sm:max-h-[calc(100vh-12rem)] overflow-y-auto pr-1">
+          <form onSubmit={handleSubmit} className="space-y-4 text-sm md:text-base">
+
+            <Input label="Job Title" name="title" required />
+            <Input label="Company" name="company" required />
+
             <div>
-              <label
-                htmlFor="title"
-                className="block text-sm font-medium text-gray-700"
-              >
-                Job Title
-              </label>
-              <input
-                className="block mt-1 w-full border text-sm md:text-md  border-gray-400 rounded-md p-2 text-gray-800 focus:outline-none focus:ring-1 focus:ring-cyan-700"
-                type="text"
-                name="title"
-                id="title"
-                required
-              />
+              <label className="block text-sm font-medium text-gray-700">Company Logo</label>
+              <div className="relative w-28 h-28 md:w-32 md:h-32 border border-gray-300 rounded-lg overflow-hidden mt-2 bg-gray-50 flex items-center justify-center">
+                {logoUrl ? (
+                  <img src={logoUrl} alt="Logo" className="w-full h-full object-cover" />
+                ) : (
+                  <p className="text-xs text-gray-400 text-center">No logo uploaded</p>
+                )}
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 hover:opacity-100 transition">
+                  <CldUploadWidget
+                    uploadPreset={process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET!}
+                    onSuccess={(event: any) => {
+                      if (event?.info?.secure_url) setLogoUrl(event.info.secure_url);
+                    }}
+                  >
+                    {({ open }) => (
+                      <button
+                        type="button"
+                        onClick={() => open()}
+                        className="text-white text-xs bg-orange-500 hover:bg-orange-600 px-3 py-1 rounded-md"
+                      >
+                        {logoUrl ? "Change" : "Upload"}
+                      </button>
+                    )}
+                  </CldUploadWidget>
+                </div>
+              </div>
             </div>
+
+            <Select label="Work Type" name="type" options={["Internship", "Part time", "Full time", "Contractual"]} />
+            <Textarea label="Responsibilities & Context" name="responsibilities" rows={5} required />
+
+            <Select
+              label="Experience"
+              name="experience"
+              options={[
+                "Freshers",
+                "6 Months",
+                "0-1 year",
+                "1-2 years",
+                "2-3 years",
+                "3-5 years",
+                "5-8 years",
+                "Above 8 years",
+              ]}
+              required
+            />
+
+            <Input label="Skills" name="skills" required placeholder="e.g., React, Tailwind, Node.js" />
+            <Input label="Education" name="education" required placeholder="e.g., BSc in Computer Science" />
+            <Input label="Number of Vacancies" name="vacancies" type="number" required />
+
             <div>
-              <label
-                htmlFor="company"
-                className="block text-sm text-gray-700"
-              >
-                Company
-              </label>
-              <input
-                className="block mt-1 w-full border text-sm md:text-md border-gray-400 rounded-md p-2 text-gray-800 focus:outline-none focus:ring-1 focus:ring-cyan-700"
-                type="text"
-                name="company"
-                id="company"
-                required
-              />
+              <p className="text-sm font-medium text-gray-700 mb-2">Compensation & Benefits</p>
+              <div className="flex flex-wrap gap-2 text-xs md:text-sm">
+                {[
+                  "Salary Review: Yearly",
+                  "Lunch Facilities: Partially Subsidize",
+                  "5 Days Work Week",
+                  "Festival Bonus: 2",
+                  "Professional Development",
+                  "Snacks, Tea & Coffee",
+                  "Health Insurance",
+                  "Others",
+                ].map((benefit) => (
+                  <label key={benefit} className="flex items-center gap-1">
+                    <input type="checkbox" name="benefits" value={benefit} />
+                    {benefit}
+                  </label>
+                ))}
+              </div>
             </div>
+
+            <Input label="Deadline" name="deadline" type="date" required />
+            <Input label="Salary (optional)" name="salary" placeholder="e.g., $30,000 - $45,000" />
+
             <div>
-              <label
-                htmlFor="title"
-                className="block text-sm text-gray-700"
-              >
-                Work Type
-              </label>
-              <select
-                className="block mt-1 w-full border text-sm md:text-md border-gray-400 rounded-md p-2 text-gray-800 focus:outline-none focus:ring-1 focus:ring-cyan-700"
-                name="type"
-                id="type"
-                required
-              >
-                <option value="">Select a type</option>
-                <option value="Internhip">Internhip</option>
-                <option value="Part time">Part time</option>
-                <option value="Full time">Full time</option>
-                <option value="Contractual">Contractual</option>
-              </select>
+              <p className="text-sm font-medium text-gray-700 mb-1">Job Location</p>
+              <div className="flex flex-wrap gap-3 text-xs md:text-sm">
+                {["Work at office", "Work from home", "Hybrid"].map((place, i) => (
+                  <label key={i} className="flex items-center gap-1">
+                    <input type="radio" name="jobplace" value={place} defaultChecked={i === 0} />
+                    {place}
+                  </label>
+                ))}
+              </div>
             </div>
-            <div>
-              <label
-                htmlFor="responsibilities"
-                className="block text-sm text-gray-700"
-              >
-                Responsibilities & Context
-              </label>
-              <textarea
-                className="block mt-1 w-full border text-sm md:text-md border-gray-400 rounded-md p-2 text-gray-800 focus:outline-none focus:ring-1 focus:ring-cyan-700"
-                name="responsibilities"
-                id="responsibilities"
-                rows={6}
-                required
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="title"
-                className="block text-sm text-gray-700"
-              >
-                Experience
-              </label>
-              <select
-                className="block mt-1 w-full border text-sm md:text-md border-gray-400 rounded-md p-2 text-gray-800 focus:outline-none focus:ring-1 focus:ring-cyan-700"
-                name="experience"
-                id="experience"
-                required
-              >
-                <option value="">Select experience</option>
-                <option value="Freshers">Freshers</option>
-                <option value="6 Months">6 Months</option>
-                <option value="0-1 year">0-1 year</option>
-                <option value="1-2 years">1-2 years</option>
-                <option value="2-3 years">2-3 years</option>
-                <option value="3-5 years">3-5 years</option>
-                <option value="5-8 years">5-8 years</option>
-                <option value="Above 8 years">Above 8 years</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="skills" className="block text-sm">Skills</label>
-              <input
-                className="block w-full p-2 border text-sm md:text-md rounded-md text-gray-800 border-gray-400 focus: outline-none mt-1 focus:ring-1 focus:ring-cyan-700"
-                type="text"
-                name="skills"
-                id="skills"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="education" className="block text-sm">Education</label>
-              <input
-                className="block w-full p-2 border text-sm md:text-md rounded-md text-gray-800 border-gray-400 focus: outline-none mt-1 focus:ring-1 focus:ring-cyan-700"
-                type="text"
-                name="education"
-                id="education"
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="vacancies" className="block text-sm md:text-md">Number of Vacancies</label>
-              <input
-                className="block w-full p-2 border text-sm md:text-md rounded-md text-gray-800 border-gray-400 focus: outline-none mt-1 focus:ring-1 focus:ring-cyan-700"
-                type="number"
-                name="vacancies"
-                id="vacancies"
-                required
-              />
-            </div>
-            <div>
-              <p className="my-2 text-sm">Compansation & Benifits:</p>
-              <input type="checkbox" id="Salary Review: Yearly" name="benefits" value="Salary Review: Yearly" />
-              <label htmlFor="Salary Review: Yearly" className="px-2 text-sm md:text-md">Salary Review: Yearly</label>
-              <input type="checkbox" id="Lunch Facilities: Partially Subsidize" name="benefits" value="Lunch Facilities: Partially Subsidize" />
-              <label htmlFor="Lunch Facilities: Partially Subsidize" className="px-2 text-sm md:text-md">Lunch Facilities: Partially Subsidize</label>
-              <input type="checkbox" id="Duty Schedule: 5 days (Sun - Thu)" name="benefits" value="Duty Schedule: 5 days (Sun - Thu)" />
-              <label htmlFor="Duty Schedule: 5 days (Sun - Thu)" className="px-2 text-sm md:text-md">Duty Schedule: 5 days (Sun - Thu)</label>
-              <input type="checkbox" id="Festival Bonus: 2" name="benefits" value="Festival Bonus: 2" />
-              <label htmlFor="Festival Bonus: 2" className="px-2 text-sm md:text-md">Festival Bonus: 2 (Eid)</label>
-              <input type="checkbox" id="Professional development opportunities" name="benefits" value="Professional development opportunities" />
-              <label htmlFor="Professional development opportunities" className="px-2 text-sm md:text-md">Professional development opportunities</label>
-              <input type="checkbox" id="Snacks, Tea & Coffee" name="benefits" value="Snacks, Tea & Coffee" />
-              <label htmlFor="Snacks, Tea & Coffee" className="px-2 text-sm md:text-md">Snacks, Tea & Coffee</label>
-              <input type="checkbox" id="Health insurance" name="benefits" value="Health insurance" />
-              <label htmlFor="Health insurance" className="px-2 text-sm md:text-md">Health insurance</label>
-              <input type="checkbox" id="Salary Review: Half Yearly" name="benefits" value="Salary Review: Half Yearly" />
-              <label htmlFor="Salary Review: Half Yearly" className="px-2 text-sm md:text-md">Salary Review: Half Yearly</label>
-              <input type="checkbox" id="Others" name="benefits" value="Others" />
-              <label htmlFor="Others" className="px-2 text-sm md:text-md">Others</label>
-            </div>
-            <div>
-              <label htmlFor="deadline" className="block text-sm">Deadline</label>
-              <input
-                className="block w-full p-2 border text-sm md:text-md rounded-md text-gray-800 border-gray-400 focus: outline-none mt-1 focus:ring-1 focus:ring-cyan-700"
-                type="date"
-                name="deadline"
-                id="deadline"
-                required
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="salary"
-                className="block text-sm text-gray-700"
-              >
-                Salary <span className="text-gray-700">(optional)</span>
-              </label>
-              <input
-                className="block mt-1 w-full border text-sm md:text-md border-gray-400 rounded-md p-2 text-gray-800 focus:outline-none focus:ring-1 focus:ring-cyan-700"
-                type="text"
-                name="salary"
-                id="salary"
-                placeholder="e.g., $30,000 - $45,000"
-              />
-            </div>
-            <div>
-              <p className="my-2 text-sm">Job Location</p>
-              <input type="radio" id="Work at office" name="jobplace" value="Work at office" defaultChecked />
-              <label htmlFor="Work at office" className="px-2 text-sm md:text-md">Work at office</label>
-              <input type="radio" id="Work from home" name="jobplace" value="Work from home" />
-              <label htmlFor="Work from home" className="px-2 text-sm md:text-md">Work from home</label>
-              <input type="radio" id="Office/Home" name="jobplace" value="Office/Home" />
-              <label htmlFor="Office/Home" className="px-2 text-sm md:text-md">Office / Home</label>
-            </div>
-            <div>
-              <label
-                htmlFor="location"
-                className="block text-sm text-gray-700"
-              >
-                Company Address
-              </label>
-              <input
-                className="block mt-1 w-full border text-sm md:text-md border-gray-400 rounded-md p-2 text-gray-800 focus:outline-none focus:ring-1 focus:ring-cyan-700"
-                type="text"
-                name="location"
-                id="location"
-                required
-              />
-            </div>
-            <div className="flex justify-end">
+
+            <Input label="Company Website (optional)" name="website" type="url" placeholder="https://yourcompany.com" />
+            <Input label="Company Address" name="location" required />
+
+            <div className="flex justify-end mb-1">
               <button
                 type="submit"
-                className="outline-0 bg-orange-400 text-sm md:text-md px-2 py-1 md:px-3 md:py-2 cursor-pointer rounded-full hover:bg-orange-500 disabled:cursor-not-allowed mt-4 font-semibold"
+                className="bg-black text-white text-sm md:text-base font-medium rounded-full px-4 py-1.5 mt-2 transition-all cursor-pointer"
               >
-                Create your post
+                Next →
               </button>
             </div>
+
           </form>
         </div>
       </div>
     </div>
-    )}
-  }
-  
-};
+  );
+}
 
-export default PostYourJob;
+
+function Input({
+  label,
+  name,
+  type = "text",
+  required = false,
+  placeholder = "",
+}: {
+  label: string;
+  name: string;
+  type?: string;
+  required?: boolean;
+  placeholder?: string;
+}) {
+  return (
+    <div>
+      <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+        {label}
+      </label>
+      <input
+        className="mt-1 w-full border border-slate-500 rounded-md px-3 py-1.5 text-gray-800 text-sm focus:ring-1 focus:ring-gray-400 outline-none transition"
+        type={type}
+        name={name}
+        id={name}
+        placeholder={placeholder}
+        required={required}
+      />
+    </div>
+  );
+}
+
+function Textarea({
+  label,
+  name,
+  rows,
+  required = false,
+}: {
+  label: string;
+  name: string;
+  rows: number;
+  required?: boolean;
+}) {
+  return (
+    <div>
+      <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+        {label}
+      </label>
+      <textarea
+        className="mt-1 w-full border border-slate-500 rounded-md px-3 py-1.5 text-gray-800 text-sm focus:ring-1 focus:ring-gray-400 outline-none transition"
+        name={name}
+        id={name}
+        rows={rows}
+        required={required}
+      />
+    </div>
+  );
+}
+
+function Select({
+  label,
+  name,
+  options,
+  required = false,
+}: {
+  label: string;
+  name: string;
+  options: string[];
+  required?: boolean;
+}) {
+  return (
+    <div>
+      <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+        {label}
+      </label>
+      <select
+        className="mt-1 w-full border border-slate-500 rounded-md px-3 py-1.5 text-gray-800 text-sm focus:ring-1 focus:ring-gray-400 outline-none transition"
+        name={name}
+        id={name}
+        required={required}
+      >
+        <option value="">Select an option</option>
+        {options.map((opt) => (
+          <option key={opt} value={opt}>
+            {opt}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+}

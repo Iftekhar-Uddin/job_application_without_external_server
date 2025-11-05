@@ -16,22 +16,16 @@ import { Default_Login_Redirect } from "@/routes";
 
 export const login = async (data: z.infer<typeof loginFormSchema>, callbackUrl?: string | null) => {
 
-  // Validate the input data
   const validatedData = loginFormSchema.parse(data);
 
-  // If the data is invalid, return an error
   if (!validatedData) {
     return { error: "Invalid input data" };
   }
 
-  // Destructure the validated data
   const { email, password, code } = validatedData;
 
-  // Check if user exists
   const userExists = await getUserByEmail(email);
 
-
-  // If the user does not exist, return an error
   if (!userExists || !userExists.email || !userExists.password) {
     return { error: "User does not exist" };
   }
@@ -99,8 +93,8 @@ export const login = async (data: z.infer<typeof loginFormSchema>, callbackUrl?:
       // redirectTo: callbackUrl || Default_Login_Redirect,
     });
 
-    if(res){
-      return {credentialsSuccess: true}
+    if (res) {
+      return { credentialsSuccess: true }
     }
 
   } catch (error) {

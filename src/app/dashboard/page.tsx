@@ -1,8 +1,7 @@
 import { redirect } from 'next/navigation';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/auth';
-import Dashboard from '@/components/Dashboard';
-
+import DashboardIntegrated from '@/components/Dashboard';
 
 const DashboardPage = async () => {
   const session = await auth();
@@ -46,9 +45,8 @@ const DashboardPage = async () => {
 
   ]);
 
-
   return (
-    <Dashboard postedJobs={postedJobs} applications={applications} />
+    <DashboardIntegrated applications={applications as any} postedJobs={postedJobs as any} />
   );
 
 }

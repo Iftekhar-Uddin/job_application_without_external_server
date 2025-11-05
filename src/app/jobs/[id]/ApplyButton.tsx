@@ -18,7 +18,6 @@ const ApplyButton = ({ jobId }: { jobId: string }) => {
     fetcher
   );
 
-
   const handleApply = async () => {
     if (!session) {
       router.push('/auth/signin');
@@ -79,7 +78,7 @@ const ApplyButton = ({ jobId }: { jobId: string }) => {
   return (
     <div className="flex content-center justify-center text-center items-center gap-x-4">
       {applicationStatus === "error" && <p className="text-red-500 md:font-semibold justify-center text-center">{errorMessage}</p>}
-      <button className={`py-1 px-4 rounded-full bg-orange-400 font-semibold ${data ? "text-white cursor-not-allowed" : " cursor-pointer"} `} onClick={handleApply}>{data? "Already applied" : "Apply"} </button>
+      <button disabled={data} className={`py-1 px-4 rounded-full font-semibold ${data ? "text-green-500 bg-black" : " cursor-pointer bg-slate-700 text-white hover:bg-black"} `} onClick={handleApply}>{data? "Already applied" : "Apply"} </button>
     </div>
   );
 

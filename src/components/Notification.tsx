@@ -14,7 +14,6 @@ export default function Notification() {
     const panelRef = useRef<HTMLDivElement | null>(null);
     const buttonRef = useRef<HTMLButtonElement | null>(null);
 
-
     // Sort: unread first then recent
     const sorted = [...notifications].sort((a, b) => {
         if (a.isRead === b.isRead) return +new Date(b.createdAt) - +new Date(a.createdAt);
@@ -50,28 +49,11 @@ export default function Notification() {
     const unredMessage = sorted.filter((sort) => sort.isRead === false);
 
 
-    // useEffect(() => {
-    //     if (open && sorted.length > 0 && listRef.current) {
-    //         const visibleUnreadIds = sorted
-    //             .filter((n) => !n.isRead)
-    //             .slice(0, 5)
-    //             .map((n) => n.id);
-    //         if (visibleUnreadIds.length) markManyAsRead(visibleUnreadIds);
-    //     }
-    // }, [open, sorted, markManyAsRead]);
-
-
-    // Example: when user opens panel, mark visible items as read after 1s
-
-
-
-
 
     return (
         <div className="relative inline-block z-10">
-            {/* Bell button */}
-            <button ref={buttonRef} onClick={() => setOpen(!open)} className="relative md:p-2 rounded-full text-orange-500 hover:text-black hover:bg-orange-400 flex">
-                <Bell className="w-5.5 h-5.5 rounded-full cursor-pointer" />
+            <button ref={buttonRef} onClick={() => setOpen(!open)} className="relative p-1.5 md:p-2 rounded-full text-slatee-500 flex hover:bg-slate-200">
+                <Bell className="w-5.5 h-5.5 rounded-full cursor-pointer text-slate-500"/>
                 {unredMessage.length > 0 && (
                     <span className="absolute -top-2 -right-2 md:-top-1 md:-right-1 flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-black rounded-full">
                         {unredMessage.length}
@@ -79,15 +61,13 @@ export default function Notification() {
                 )}
             </button>
 
-            {/* Dropdown list */}
             {open && sorted.length > 0 && (
-                <div ref={panelRef} className="bg-amber-100 absolute -right-18 md:left-full w-[94vw] sm:w-[60vw] md:w-72 top-8.5 md:top-12.5 p-3 rounded-sm md:rounded-md ring-1 ring-orange-500">
-                    <div className="flex flex-col text-sm md:text-base max-h-fit h-80 overflow-y-scroll font-sans divide-y divide-orange-500 scrollbar-hide">
+                <div ref={panelRef} className="bg-slate-100 absolute -right-18 md:left-full w-[94vw] sm:w-[60vw] md:w-72 top-8.5 md:top-12.5 p-3 rounded-sm md:rounded-md ring-1 ring-slate-500">
+                    <div className="flex flex-col text-sm md:text-base max-h-fit h-80 overflow-y-scroll font-sans divide-y divide-slate-500 scrollbar-hide">
                         {sorted.map((n) => (
                             <div key={n.id} className="py-2 first:pt-0 last:pb-0">
                                 <li
-                                    className={`list-none ${n.isRead ? "bg-amber-100" : "bg-amber-200 hover:bg-gray-200"
-                                        } px-2 py-1 rounded-sm cursor-pointer`}
+                                    className={`list-none ${n.isRead ? "bg-white" : "bg-slate-100 hover:bg-gray-200"} px-2 py-1 rounded-sm cursor-pointer`}
                                     onClick={() => {
                                         markAsRead(n.id);
                                         router.push(n.data?.url);
