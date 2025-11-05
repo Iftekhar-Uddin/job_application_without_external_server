@@ -25,7 +25,6 @@ interface CustomToken {
   };
 }
 
-export const runtime = "edge";
 
 export async function middleware(req:any) {
   const { nextUrl } = req;
