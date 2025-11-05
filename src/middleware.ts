@@ -2,47 +2,48 @@ import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 const apiAuthPrefix = "/api/auth";
-const authRoutes = [ "/auth/signin", "/auth/register", "/auth/reset", "/newPassword", "/auth/error"];
-const publicRoutes = [ "/", "/verifyEmail", "/settings", "/jobs"];
+const authRoutes = ["/auth/signin", "/auth/register", "/auth/reset", "/newPassword", "/auth/error"];
+const publicRoutes = ["/", "/verifyEmail", "/settings", "/jobs"];
 const Default_Login_Redirect = "/dashboard";
-
 
 interface CustomToken {
   user?: {
-  id: string;
-  role: string;
-  email: string | null;
-  name?: string | null;
-  image?: string | null;
-  isTwoFactorEnabled: boolean;
-  isOAuth?: boolean;
-  education?: string | null;
-  skills?: string[] | null;
-  experience?: string | null;
-  previousInstitution?: string | null;
-  address?: string | null;
-  updatedAt: Date | string; 
+    id: string;
+    role: string;
+    email: string | null;
+    name?: string | null;
+    image?: string | null;
+    isTwoFactorEnabled: boolean;
+    isOAuth?: boolean;
+    education?: string | null;
+    skills?: string[] | null;
+    experience?: string | null;
+    previousInstitution?: string | null;
+    address?: string | null;
+    updatedAt: Date | string;
   };
 }
 
-
-export async function middleware(req:any) {
+export async function middleware(req: any) {
   const { nextUrl } = req;
-  const token = await getToken({ req }) as CustomToken | null
+  const token = (await getToken({ req })) as CustomToken | null;
   const user = token?.user;
   const isLoggedIn = !!token;
 
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
-  const isAdminRoute = nextUrl.pathname.startsWith("/admin") || nextUrl.pathname.startsWith("/api/admin") || nextUrl.pathname.startsWith("/admin/jobs");
+  const isAdminRoute =
+    nextUrl.pathname.startsWith("/admin") ||
+    nextUrl.pathname.startsWith("/api/admin") ||
+    nextUrl.pathname.startsWith("/admin/jobs");
 
   if (isApiAuthRoute) return NextResponse.next();
 
   if (isAuthRoute && isLoggedIn)
     return NextResponse.redirect(new URL(Default_Login_Redirect, nextUrl));
 
-  if (!isLoggedIn && !isPublicRoute) {
+  if (!isLoggedIn && !isPublicRoute && !isAuthRoute) {
     const encoded = encodeURIComponent(nextUrl.pathname + nextUrl.search);
     return NextResponse.redirect(new URL(`/auth/signin?callbackUrl=${encoded}`, nextUrl));
   }
@@ -60,6 +61,7 @@ export async function middleware(req:any) {
 export const config = {
   matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
 };
+
 
 
 
