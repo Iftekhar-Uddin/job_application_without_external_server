@@ -1,66 +1,52 @@
 import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
+export const runtime = "edge"; // Edge runtime
+
 const apiAuthPrefix = "/api/auth";
 const authRoutes = ["/auth/signin", "/auth/register", "/auth/reset", "/newPassword", "/auth/error"];
 const publicRoutes = ["/", "/verifyEmail", "/settings", "/jobs"];
 const Default_Login_Redirect = "/dashboard";
 
-interface CustomToken {
-  user?: {
-    id: string;
-    role: string;
-    email: string | null;
-    name?: string | null;
-    image?: string | null;
-    isTwoFactorEnabled: boolean;
-    isOAuth?: boolean;
-    education?: string | null;
-    skills?: string[] | null;
-    experience?: string | null;
-    previousInstitution?: string | null;
-    address?: string | null;
-    updatedAt: Date | string;
-  };
-}
-
 export async function middleware(req: any) {
   const { nextUrl } = req;
-  const token = (await getToken({req, secret: process.env.AUTH_SECRET})) as CustomToken | null;
-  const user = token?.user;
+  // Use same secret as NextAuth
+  const token = await getToken({ req, secret: process.env.AUTH_SECRET }) as any;
+  const user = token;
   const isLoggedIn = !!token;
 
-  const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
-  const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
-  const isAuthRoute = authRoutes.includes(nextUrl.pathname);
-  const isAdminRoute =
-    nextUrl.pathname.startsWith("/admin") ||
-    nextUrl.pathname.startsWith("/api/admin") ||
-    nextUrl.pathname.startsWith("/admin/jobs");
+  const pathname = nextUrl.pathname;
+  const isApiAuthRoute = pathname.startsWith(apiAuthPrefix);
+  const isPublicRoute = publicRoutes.includes(pathname);
+  const isAuthRoute = authRoutes.includes(pathname);
+  const isAdminRoute = pathname.startsWith("/admin") || pathname.startsWith("/api/admin");
 
+  // Allow API auth routes
   if (isApiAuthRoute) return NextResponse.next();
 
-  if (isAuthRoute && isLoggedIn)
-    return NextResponse.redirect(new URL(Default_Login_Redirect, nextUrl));
+  // Logged-in users trying to access auth pages
+  if (isAuthRoute && isLoggedIn) return NextResponse.redirect(new URL(Default_Login_Redirect, nextUrl));
 
+  // Non-logged-in users trying to access protected pages
   if (!isLoggedIn && !isPublicRoute && !isAuthRoute) {
-    const encoded = encodeURIComponent(nextUrl.pathname + nextUrl.search);
-    return NextResponse.redirect(new URL(`/auth/signin?callbackUrl=${encoded}`, nextUrl));
+    const callback = encodeURIComponent(nextUrl.pathname + nextUrl.search);
+    return NextResponse.redirect(new URL(`/auth/signin?callbackUrl=${callback}`, nextUrl));
   }
 
-  if (isAdminRoute) {
-    if (!isLoggedIn)
-      return NextResponse.redirect(new URL(`/auth/signin`, nextUrl));
-    if (user?.role !== "Admin")
-      return NextResponse.redirect(new URL("/403", nextUrl));
+  // Admin routes
+  if (isAdminRoute && user?.role !== "Admin") {
+    if (!isLoggedIn) return NextResponse.redirect(new URL(`/auth/signin`, nextUrl));
+    return NextResponse.redirect(new URL("/403", nextUrl));
   }
 
   return NextResponse.next();
 }
 
+// Exclude static files from middleware
 export const config = {
-  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: ["/((?!_next/static|_next/image|favicon.ico|.*\\..*).*)"],
 };
+
 
 
 

@@ -121,19 +121,19 @@ export const { auth, handlers, signIn, signOut } = NextAuth({
     async jwt({ token, user, account }) {
       if (user) {
         token.id = user.id;
-        token.name = user.name || null;
-        token.email = user.email || null;
+        token.name = user.name ?? null;
+        token.email = user.email ?? null;
         token.role = user.role;
-        token.image = user.image || null;
-        token.isTwoFactorEnabled = user.isTwoFactorEnabled || false;
-        token.education = user.education || null;
-        token.skills = user.skills || [];
-        token.experience = user.experience || null;
-        token.previousInstitution = user.previousInstitution || null;
-        token.address = user.address || null;
+        token.image = user.image ?? null;
+        token.isTwoFactorEnabled = user.isTwoFactorEnabled ?? false;
+        token.education = user.education ?? null;
+        token.skills = user.skills ?? [];
+        token.experience = user.experience ?? null;
+        token.previousInstitution = user.previousInstitution ?? null;
+        token.address = user.address ?? null;
         //Mark whether this user logged in via OAuth or credentials
         token.isOAuth = account?.provider !== "credentials";
-        token.updatedAt = user.updatedAt || null
+        token.updatedAt = user.updatedAt?.toString();
       }
       return token;
     },
