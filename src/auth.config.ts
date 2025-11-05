@@ -7,4 +7,4 @@ const authConfig: NextAuthConfig = {
   providers: [CredentialsProvider, GitHub, Google],
 };
 
-export default authConfig
+export default authConfig;
