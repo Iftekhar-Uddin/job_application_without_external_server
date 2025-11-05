@@ -26,7 +26,7 @@ interface CustomToken {
 
 export async function middleware(req: any) {
   const { nextUrl } = req;
-  const token = (await getToken({ req })) as CustomToken | null;
+  const token = (await getToken({req, secret: process.env.AUTH_SECRET})) as CustomToken | null;
   const user = token?.user;
   const isLoggedIn = !!token;
 
@@ -109,18 +109,18 @@ export const config = {
 //   }
 
 
-  // if (isAdminRoute) {
-  //   if (!isLoggedIn) {
-  //     const encoded = encodeURIComponent(nextUrl.pathname);
-  //     return NextResponse.redirect(
-  //       new URL(`/auth/signin?callbackUrl=${encoded}`, nextUrl)
-  //     );
-  //   };
+// if (isAdminRoute) {
+//   if (!isLoggedIn) {
+//     const encoded = encodeURIComponent(nextUrl.pathname);
+//     return NextResponse.redirect(
+//       new URL(`/auth/signin?callbackUrl=${encoded}`, nextUrl)
+//     );
+//   };
 
-  //   if (user?.role !== "Admin") {
-  //     return NextResponse.redirect(new URL("/403", nextUrl));
-  //   }
-  // }
+//   if (user?.role !== "Admin") {
+//     return NextResponse.redirect(new URL("/403", nextUrl));
+//   }
+// }
 //   return null;
 
 // });
