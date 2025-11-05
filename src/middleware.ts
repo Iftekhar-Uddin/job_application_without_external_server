@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-export const runtime = "edge"; // Edge runtime
+export const runtime = "experimental-edge";
 
 const apiAuthPrefix = "/api/auth";
 const authRoutes = ["/auth/signin", "/auth/register", "/auth/reset", "/newPassword", "/auth/error"];
