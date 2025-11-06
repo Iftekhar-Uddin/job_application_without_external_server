@@ -8,7 +8,7 @@ import bcrypt from "bcryptjs";
 
 import { getUserByEmail } from "@/data/users";
 import { getTwoFactorConfirmationByUserId } from "@/data/twoFactorConfirmation";
-import authConfig from "./auth.config";
+// import authConfig from "./auth.config";
 
 import type { UserRole } from "@prisma/client";
 import type { ExtendedUser } from "./../next-auth";
@@ -22,7 +22,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     maxAge: 30 * 24 * 60 * 60,
   },
 
-  ...authConfig,
+  // ...authConfig,
 
   providers: [
     GoogleProvider({

@@ -12,9 +12,6 @@ export default async function middleware(req: NextRequest) {
 
   const token = await getToken({ req, secret: process.env.AUTH_SECRET });
 
-  console.log("NEXTAUTH TOKEN:", token);
-  console.log("COOKIE HEADER:", req.headers.get("cookie"));
-
   const isLoggedIn = !!token;
   const user = token;
 
