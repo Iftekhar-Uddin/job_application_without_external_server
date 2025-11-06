@@ -18,8 +18,6 @@ const TotalJobs = async ({ searchParams }: any)  => {
 
   const session = await auth();
 
-  console.log(session);
-
   const querys = (resolvedParams?.query as string) || "";
   const searchType = (resolvedParams?.type as string) || "";
   const searchLocation = (resolvedParams?.location as string) || "";

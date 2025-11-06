@@ -1,66 +1,85 @@
 import { NextResponse } from "next/server";
-import { auth } from "./auth";
-import { apiAuthPrefix, authRoutes, publicRoutes, Default_Login_Redirect } from "./routes";
+import type { NextRequest } from "next/server";
 
-export default auth((req) => {
-  const { nextUrl } = req;
-  const isLoggedIn = !!req.auth;
-  const user = req.auth?.user;
+// Define routes inline to avoid imports
+const apiAuthPrefix = "/api/auth";
+const authRoutes = [
+  "/auth/signin",
+  "/auth/register",
+  "/auth/reset",
+  "/newPassword",
+  "/auth/error",
+];
+const publicRoutes = [
+  "/",
+  "/verifyEmail",
+  "/settings",
+  "/jobs",
+];
+const Default_Login_Redirect = "/dashboard";
+
+export default function middleware(request: NextRequest) {
+  const { nextUrl } = request;
+  
+  // Check authentication using cookies only (NO auth import)
+  const isLoggedIn = 
+    request.cookies.has("next-auth.session-token") ||
+    request.cookies.has("__Secure-next-auth.session-token");
+  
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
-  const isAdminRoute = nextUrl.pathname.startsWith("/admin") || nextUrl.pathname.startsWith("/api/admin") || nextUrl.pathname.startsWith("/admin/jobs");
+  const isAdminRoute = nextUrl.pathname.startsWith("/admin") || 
+                      nextUrl.pathname.startsWith("/api/admin");
 
-   
-  // Allow API auth routes to pass
-  // if (isApiAuthRoute) return null;
-
+  // Allow API auth routes and all API routes
   if (isApiAuthRoute || nextUrl.pathname.startsWith("/api")) {
-    const res = NextResponse.next();
-    res.headers.set(
-      "Access-Control-Allow-Origin",
-      "http://localhost:3000"
-    );
-    res.headers.set("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
-    res.headers.set("Access-Control-Allow-Headers", "Content-Type");
-    return res;
+    const response = NextResponse.next();
+    
+    // Add CORS headers for development
+    if (process.env.NODE_ENV === "development") {
+      response.headers.set(
+        "Access-Control-Allow-Origin",
+        "http://localhost:3000"
+      );
+      response.headers.set("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+      response.headers.set("Access-Control-Allow-Headers", "Content-Type");
+    }
+    return response;
   }
 
+  // Handle auth routes
   if (isAuthRoute) {
     if (isLoggedIn) {
-      return NextResponse.redirect(new URL(Default_Login_Redirect, nextUrl))
+      return NextResponse.redirect(new URL(Default_Login_Redirect, nextUrl));
     }
-    return null;
-  };
+    return NextResponse.next();
+  }
 
+  // Redirect unauthenticated users for protected routes
   if (!isLoggedIn && !isPublicRoute) {
-    let callbackUrl = nextUrl.pathname;
-    if(nextUrl.search){
-      callbackUrl += nextUrl.search
-    }
-    const encoded = encodeURIComponent(nextUrl.pathname);
+    const callbackUrl = encodeURIComponent(nextUrl.pathname + nextUrl.search);
     return NextResponse.redirect(
-      new URL(`/auth/signin?callbackUrl=${encoded}`, nextUrl)
+      new URL(`/auth/signin?callbackUrl=${callbackUrl}`, nextUrl)
     );
   }
 
-  if (isAdminRoute) {
-    if (!isLoggedIn) {
-      const encoded = encodeURIComponent(nextUrl.pathname);
-      return NextResponse.redirect(
-        new URL(`/auth/signin?callbackUrl=${encoded}`, nextUrl)
-      );
-    };
-
-    if (user?.role !== "Admin") {
-      return NextResponse.redirect(new URL("/403", nextUrl));
-    }
+  // For admin routes, handle role checking in pages themselves
+  if (isAdminRoute && !isLoggedIn) {
+    const callbackUrl = encodeURIComponent(nextUrl.pathname);
+    return NextResponse.redirect(
+      new URL(`/auth/signin?callbackUrl=${callbackUrl}`, nextUrl)
+    );
   }
-  return null;
-});
+
+  return NextResponse.next();
+}
+
 
 export const config = {
-  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+  matcher: [    "/dashboard/",
+    "/admin/", 
+    "/profile/"],
 };
 
 
