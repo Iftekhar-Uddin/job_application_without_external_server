@@ -16,7 +16,7 @@ import type { ExtendedUser } from "./../next-auth";
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma) as any,
   secret: process.env.AUTH_SECRET,
-  trustHost: process.env.NODE_ENV === "development" ? true : undefined,
+  trustHost: process.env.NODE_ENV === "production",
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60,
