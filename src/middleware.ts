@@ -1,63 +1,136 @@
-import { NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
+import { NextResponse } from "next/server";
+import { auth } from "./auth";
 import { apiAuthPrefix, authRoutes, publicRoutes, Default_Login_Redirect } from "./routes";
 
-export const config = {
-  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
-  runtime: "nodejs",
-};
-
-export default async function middleware(req: NextRequest) {
+export default auth((req) => {
   const { nextUrl } = req;
-
-  const token = await getToken({ req, secret: process.env.AUTH_SECRET });
-
-  const isLoggedIn = !!token;
-  const user = token;
-
+  const isLoggedIn = !!req.auth;
+  const user = req.auth?.user;
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
-  const isAdminRoute =
-    nextUrl.pathname.startsWith("/admin") ||
-    nextUrl.pathname.startsWith("/api/admin") ||
-    nextUrl.pathname.startsWith("/admin/jobs");
+  const isAdminRoute = nextUrl.pathname.startsWith("/admin") || nextUrl.pathname.startsWith("/api/admin") || nextUrl.pathname.startsWith("/admin/jobs");
 
-  // Skip API auth routes
-  if (isApiAuthRoute) return null;
+   
+  // Allow API auth routes to pass
+  // if (isApiAuthRoute) return null;
 
-  // Redirect logged-in users away from auth pages
-  if (isAuthRoute) {
-    if (isLoggedIn) {
-      return NextResponse.redirect(new URL(Default_Login_Redirect, nextUrl));
-    }
-    return null;
+  if (isApiAuthRoute || nextUrl.pathname.startsWith("/api")) {
+    const res = NextResponse.next();
+    res.headers.set(
+      "Access-Control-Allow-Origin",
+      "http://localhost:3000"
+    );
+    res.headers.set("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+    res.headers.set("Access-Control-Allow-Headers", "Content-Type");
+    return res;
   }
 
-  // Protect private routes
-  if (!isLoggedIn && !isPublicRoute && !isAuthRoute) {
-    const callback = encodeURIComponent(nextUrl.pathname + nextUrl.search);
+  if (isAuthRoute) {
+    if (isLoggedIn) {
+      return NextResponse.redirect(new URL(Default_Login_Redirect, nextUrl))
+    }
+    return null;
+  };
+
+  if (!isLoggedIn && !isPublicRoute) {
+    let callbackUrl = nextUrl.pathname;
+    if(nextUrl.search){
+      callbackUrl += nextUrl.search
+    }
+    const encoded = encodeURIComponent(nextUrl.pathname);
     return NextResponse.redirect(
-      new URL(`/auth/signin?callbackUrl=${callback}`, nextUrl)
+      new URL(`/auth/signin?callbackUrl=${encoded}`, nextUrl)
     );
   }
 
-  // Admin routes
   if (isAdminRoute) {
     if (!isLoggedIn) {
       const encoded = encodeURIComponent(nextUrl.pathname);
       return NextResponse.redirect(
         new URL(`/auth/signin?callbackUrl=${encoded}`, nextUrl)
       );
-    }
+    };
 
     if (user?.role !== "Admin") {
       return NextResponse.redirect(new URL("/403", nextUrl));
     }
   }
-
   return null;
-}
+});
+
+export const config = {
+  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+};
+
+
+
+
+
+
+
+
+// import { NextResponse } from "next/server"
+// import type { NextRequest } from "next/server"
+// import { 
+//   apiAuthPrefix, 
+//   authRoutes, 
+//   publicRoutes, 
+//   Default_Login_Redirect 
+// } from "@/routes"
+
+// export default function middleware(request: NextRequest) {
+//   const { nextUrl } = request
+//   const token = request.cookies.get("next-auth.session-token") || 
+//                 request.cookies.get("__Secure-next-auth.session-token")
+  
+//   const isLoggedIn = !!token
+//   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix)
+//   const isPublicRoute = publicRoutes.some(route => 
+//     nextUrl.pathname.startsWith(route)
+//   )
+//   const isAuthRoute = authRoutes.includes(nextUrl.pathname)
+//   const isAdminRoute = nextUrl.pathname.startsWith("/admin")
+
+//   // Allow API auth routes
+//   if (isApiAuthRoute) {
+//     return NextResponse.next()
+//   }
+
+//   // Handle auth routes
+//   if (isAuthRoute) {
+//     if (isLoggedIn) {
+//       return NextResponse.redirect(new URL(Default_Login_Redirect, nextUrl))
+//     }
+//     return NextResponse.next()
+//   }
+
+//   // Handle admin routes
+//   if (isAdminRoute && !isLoggedIn) {
+//     const callbackUrl = encodeURIComponent(nextUrl.pathname)
+//     return NextResponse.redirect(
+//       new URL(`/auth/signin?callbackUrl=${callbackUrl}`, nextUrl)
+//     )
+//   }
+
+//   // Redirect unauthenticated users to signin for protected routes
+//   if (!isLoggedIn && !isPublicRoute && !isAuthRoute) {
+//     const callbackUrl = encodeURIComponent(nextUrl.pathname + nextUrl.search)
+//     return NextResponse.redirect(
+//       new URL(`/auth/signin?callbackUrl=${callbackUrl}`, nextUrl)
+//     )
+//   }
+
+//   return NextResponse.next()
+// }
+
+// export const config = {
+//   matcher: [
+//     "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+//   ],
+// }
+
+
 
 
 
@@ -82,37 +155,37 @@ export default async function middleware(req: NextRequest) {
 //   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 //   const isAdminRoute = nextUrl.pathname.startsWith("/admin") || nextUrl.pathname.startsWith("/api/admin") || nextUrl.pathname.startsWith("/admin/jobs");
 
-//   if (isApiAuthRoute) {
-//     return null
-//   };
+  // if (isApiAuthRoute) {
+  //   return null
+  // };
 
-//   if (isAuthRoute) {
-//     if (isLoggedIn) {
-//       return NextResponse.redirect(new URL(Default_Login_Redirect, nextUrl))
-//     }
-//     return null;
-//   };
-
-
-//   if (!isLoggedIn && !isPublicRoute && !isAuthRoute) {
-//     const callback = encodeURIComponent(nextUrl.pathname + nextUrl.search);
-//     return NextResponse.redirect(new URL(`/auth/signin?callbackUrl=${callback}`, nextUrl));
-//   }
+  // if (isAuthRoute) {
+  //   if (isLoggedIn) {
+  //     return NextResponse.redirect(new URL(Default_Login_Redirect, nextUrl))
+  //   }
+  //   return null;
+  // };
 
 
-//   if (isAdminRoute) {
-//     if (!isLoggedIn) {
-//       const encoded = encodeURIComponent(nextUrl.pathname);
-//       return NextResponse.redirect(
-//         new URL(`/auth/signin?callbackUrl=${encoded}`, nextUrl)
-//       );
-//     };
+  // if (!isLoggedIn && !isPublicRoute && !isAuthRoute) {
+  //   const callback = encodeURIComponent(nextUrl.pathname + nextUrl.search);
+  //   return NextResponse.redirect(new URL(`/auth/signin?callbackUrl=${callback}`, nextUrl));
+  // }
 
-//     if (user?.role !== "Admin") {
-//       return NextResponse.redirect(new URL("/403", nextUrl));
-//     }
-//   }
-//   return null;
+
+  // if (isAdminRoute) {
+  //   if (!isLoggedIn) {
+  //     const encoded = encodeURIComponent(nextUrl.pathname);
+  //     return NextResponse.redirect(
+  //       new URL(`/auth/signin?callbackUrl=${encoded}`, nextUrl)
+  //     );
+  //   };
+
+  //   if (user?.role !== "Admin") {
+  //     return NextResponse.redirect(new URL("/403", nextUrl));
+  //   }
+  // }
+  // return null;
 
 // });
 
