@@ -56,6 +56,68 @@ export default async function RootLayout({
 
 
 
+
+// import "./globals.css";
+// import type { Metadata } from "next";
+// import Navbar from "@/components/Navbar";
+// import { SessionProvider } from "next-auth/react";
+// import { Toaster } from "react-hot-toast";
+// import { ReduxProvider } from "@/redux/provider";
+
+// export const metadata: Metadata = {
+//   title: "Job_Application",
+//   description: "For My Personal Project",
+// };
+
+// export default function RootLayout({
+//   children,
+// }: {
+//   children: React.ReactNode;
+// }) {
+//   return (
+//     <html lang="en">
+//       <body className="relative min-h-screen overflow-x-hidden">
+
+//         <div
+//           className="fixed inset-0 bg-cover bg-center bg-no-repeat -z-10"
+//           style={{ backgroundImage: "url('/bg-picture.png')" }}
+//         >
+//           <div className="absolute inset-0 bg-black/50" />
+//         </div>
+
+//         <SessionProvider>
+//           <ReduxProvider>
+//             <div className="relative z-10 min-h-screen py-2 md:py-4">
+//               <main className="container mx-auto p-3 space-y-2.5 md:space-y-6">
+//                 <Navbar />
+//                 {children}
+//               </main>
+//             </div>
+
+//             <Toaster position="top-right" />
+//           </ReduxProvider>
+//         </SessionProvider>
+
+//       </body>
+//     </html>
+//   );
+// }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // import "./globals.css";
 // import type { Metadata } from "next";
 // import Navbar from "@/components/Navbar";

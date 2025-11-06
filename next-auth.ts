@@ -1,5 +1,5 @@
 import { UserRole } from "@prisma/client";
-import { DefaultSession } from "next-auth";
+import { DefaultSession} from "next-auth";
 
 export type ExtendedUser = {
   id: string;
@@ -14,8 +14,10 @@ export type ExtendedUser = {
   experience?: string | null;
   previousInstitution?: string | null;
   address?: string | null;
-  updatedAt: Date | string; 
+  updatedAt: Date | string | null; 
 };
+
+
 
 declare module "next-auth" {
   interface Session {
@@ -25,3 +27,4 @@ declare module "next-auth" {
   interface User extends ExtendedUser {}
   interface JWT extends Partial<ExtendedUser> {}
 }
+
