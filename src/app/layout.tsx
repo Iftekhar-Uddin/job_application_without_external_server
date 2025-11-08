@@ -35,7 +35,6 @@ export default async function RootLayout({
                 {children}
               </main>
             </div>
-
             <Toaster position="top-right" />
           </ReduxProvider>
         </SessionProvider>
