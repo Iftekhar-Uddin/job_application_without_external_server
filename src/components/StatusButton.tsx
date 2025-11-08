@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, startTransition } from "react";
 import { applicants } from "@/actions/applicants";
 import { useSession } from 'next-auth/react';
 
@@ -50,6 +50,21 @@ export default function StatusButton({
       const res = await applicants(applicationId, jobId, status);
       if (res?.success) {
         if (onSuccess) onSuccess();
+        await fetch("/api/notifications", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            receiverId: applicant?.userId,
+            title: job?.title,
+            body: status,
+            data: { url: "/dashboard" }
+          })
+        });
+
+        // startTransition(() => {
+        //   router.refresh();
+        // });
+
       } else {
         setError(res?.error ?? "Failed to update status");
       }

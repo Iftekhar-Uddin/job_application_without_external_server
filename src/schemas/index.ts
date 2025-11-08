@@ -78,5 +78,21 @@ export const profileSchema = z.object({
   experience: z.string().optional().nullable(),
   previousInstitution: z.string().optional().nullable(),
   address: z.string().optional().nullable(),
-  password: z.string().optional(),
 });
+
+export const passwordSchema = z
+  .object({
+    currentPassword: z.string().min(6, "Current password is required"),
+    newPassword: z
+      .string()
+      .min(8, "Password must be at least 8 characters")
+      .regex(/[0-9]/, "Password must contain at least one digit")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+      .regex(/[^A-Za-z0-9]/, "Password must contain at least one special character"),
+    confirmPassword: z.string().min(1),
+  })
+  .refine((d) => d.newPassword === d.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });

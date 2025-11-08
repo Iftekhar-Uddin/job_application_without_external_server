@@ -74,7 +74,6 @@ export default function DashboardIntegrated({
     router.push("/auth/signin")
   };
 
-
   const stats = useMemo(() => ({
     postedCount: postedJobs.length,
     applicationsCount: applications.length,
@@ -224,7 +223,7 @@ export default function DashboardIntegrated({
           </div>
         </div>
 
-        {/* Logo Box - Absolute Top-Right */}
+
         <div className="absolute top-5 right-5 w-16 h-16 rounded-md overflow-hidden border bg-gray-50 flex items-center justify-center">
           {job.logo ? (
             <img src={job.logo} alt={`${job.company} logo`} className="w-full h-full object-cover" />
@@ -238,7 +237,7 @@ export default function DashboardIntegrated({
 
   );
 
-  // APPLICATION ROW for modal: includes collapse toggle for full applicant info; passes onSuccess to StatusButton
+
   const ApplicationRow = ({ application }: { application: Application }) => {
     const [open, setOpen] = useState(false);
     return (
@@ -270,7 +269,6 @@ export default function DashboardIntegrated({
             </div>
 
             <button onClick={() => setOpen(v => !v)} className="text-xs px-2 py-1 text-blue-500 bg-blue-100 hover:bg-blue-200 rounded-sm">{open ? "Hide" : "Details"}</button>
-
             <button onClick={() => window.open(`/jobs/${application.job.id}`, "_blank")} className="text-xs px-2 py-1 rounded-sm bg-gray-200 hover:bg-gray-300">View Job</button>
           </div>
         </div>

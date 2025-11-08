@@ -10,7 +10,7 @@ type ApplicantModalProps = {
   onClose: () => void;
   title?: React.ReactNode;
   children?: React.ReactNode;
-  size?: "sm" | "md" | "lg"; // controls width
+  size?: "sm" | "md" | "lg";
 };
 
 export default function ApplicantModal({ open, onClose, title, children, size = "lg" }: ApplicantModalProps) {
