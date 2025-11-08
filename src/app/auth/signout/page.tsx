@@ -4,7 +4,7 @@ import { useState } from "react";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
-export function SignOutButton() {
+const SignOutButton = ()=> {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -48,3 +48,5 @@ export function SignOutButton() {
     </button>
   );
 }
+
+export default SignOutButton;
