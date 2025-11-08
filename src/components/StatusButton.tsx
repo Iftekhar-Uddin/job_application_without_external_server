@@ -54,7 +54,7 @@ export default function StatusButton({
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            receiverId: applicant?.userId,
+            receiverId: applicant,
             title: job?.title,
             body: status,
             data: { url: "/dashboard" }

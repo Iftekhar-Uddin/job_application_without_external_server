@@ -25,6 +25,8 @@ export async function POST(req: NextRequest) {
   const body = await req.json();
   const { receiverId, title, body: messageBody, data } = body;
 
+  console.log(body)
+
   if (!receiverId || !title || !messageBody) {
     return NextResponse.json({ message: "Missing fields" }, { status: 400 });
   }

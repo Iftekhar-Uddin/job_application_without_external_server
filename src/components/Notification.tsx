@@ -62,12 +62,12 @@ export default function Notification() {
             </button>
 
             {open && sorted.length > 0 && (
-                <div ref={panelRef} className="bg-slate-100 absolute -right-18 md:left-full w-[94vw] sm:w-[60vw] md:w-72 top-8.5 md:top-12.5 p-3 rounded-sm md:rounded-md ring-1 ring-slate-500">
+                <div ref={panelRef} className="bg-white/70 absolute -right-18 md:left-full w-[94vw] sm:w-[60vw] md:w-72 top-8.5 md:top-12.5 p-3 rounded-sm md:rounded-md ring-1 ring-slate-400">
                     <div className="flex flex-col text-sm md:text-base max-h-fit h-80 overflow-y-scroll font-sans divide-y divide-slate-500 scrollbar-hide">
                         {sorted.map((n) => (
                             <div key={n.id} className="py-2 first:pt-0 last:pb-0">
                                 <li
-                                    className={`list-none ${n.isRead ? "bg-white" : "bg-slate-100 hover:bg-gray-200"} px-2 py-1 rounded-sm cursor-pointer`}
+                                    className={`list-none ${n.isRead ? "bg-white/70" : "bg-white hover:bg-gray-100"} px-2 py-1 rounded-sm cursor-pointer`}
                                     onClick={() => {
                                         markAsRead(n.id);
                                         router.push(n.data?.url);
@@ -76,10 +76,10 @@ export default function Notification() {
                                 >
                                     <b>{n?.title} </b> application status has been changed to {n.body}
                                     <p
-                                        className={`text-sm ${n.isRead ? "text-gray-500" : "text-green-600"
+                                        className={`text-sm ${n.isRead ? "text-yellow-600" : "text-emerald-500"
                                             }`}
                                     >
-                                        {new Date(n.createdAt).toLocaleString()}
+                                        {new Date(n.createdAt).toLocaleString("en-GB")}
                                     </p>
                                 </li>
                             </div>

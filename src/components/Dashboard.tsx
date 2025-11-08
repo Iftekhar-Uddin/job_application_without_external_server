@@ -115,9 +115,9 @@ export default function DashboardIntegrated({
     try {
       const res = await fetch(`/api/applicants?jobId=${encodeURIComponent(jobId)}`);
       if (!res.ok) throw new Error(`Failed to load (${res.status})`);
-      const data = await res.json();
+      const datas = await res.json();
       // data should be Application[]
-      setApplicants(data);
+      setApplicants(datas);
     } catch (err: any) {
       console.error(err);
       setApplicantsError(err?.message ?? "Failed to load applicants");
@@ -331,7 +331,7 @@ export default function DashboardIntegrated({
                 <StatusButton
                   applicationId={application.id}
                   jobId={application.job?.id}
-                  applicant={application}
+                  applicant={application?.user?.id}
                   job={application.job}
                   onSuccess={handleApplicantStatusChanged}
                 />
