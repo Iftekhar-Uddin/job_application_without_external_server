@@ -19,8 +19,22 @@ export async function PUT(req: Request) {
       return NextResponse.json({ error: errorMessage }, { status: 400 });
     }
 
+    // Email uniqueness check
+    if (validated.data?.email && validated.data?.email !== session.user.email) {
+      const existingUser = await prisma.user.findUnique({
+        where: { email: validated.data?.email.toLowerCase() },
+      });
+
+      if (existingUser && existingUser.id !== session.user.id) {
+        return NextResponse.json(
+          { error: "Email is already taken" },
+          { status: 409 }
+        );
+      }
+    };
+
     const updateData = validated.data;
-    
+
     const updatedUser = await prisma.user.update({
       where: { email: session.user.email },
       data: updateData,

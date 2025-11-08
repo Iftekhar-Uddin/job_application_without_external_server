@@ -1,67 +1,95 @@
-export default function HomeSkeleton() {
-  const shimmerLayer = (
-    <div className="absolute inset-0 -translate-x-full bg-[linear-gradient(to_right,transparent,#93C5FD66,#86EFAC66,#FDBA7466,transparent)] animate-shimmer" />
+"use client";
+import React from "react";
+
+const HomeSkeletonWithShimmer = () => {
+  const ShimmerOverlay = () => (
+    <div className="absolute inset-0 -translate-x-full animate-shimmer bg-gradient-to-r from-transparent via-white/60 to-transparent" />
   );
 
   return (
-    <div className="mx-auto max-w-7xl space-y-4 md:space-y-6 p-4">
+    <div className="mx-auto max-w-7xl space-y-4 md:space-y-6 z-0">
       {/* Hero Section */}
-      <section className="relative bg-gray-100 rounded-lg shadow-md overflow-hidden py-6 md:py-20 text-center">
-        <div className="flex flex-col items-center space-y-4 relative overflow-hidden">
-          {shimmerLayer}
-          <div className="w-2/3 md:w-1/3 h-8 bg-gray-200 rounded"></div>
-          <div className="w-3/4 md:w-1/2 h-4 bg-gray-200 rounded"></div>
-          <div className="w-36 h-10 bg-gray-200 rounded-md"></div>
+      <section className="relative bg-gray-300 rounded-lg shadow-md overflow-hidden">
+        <ShimmerOverlay />
+        <div className="relative text-center py-4 md:py-20 px-4">
+          <div className="h-8 md:h-12 w-3/4 md:w-1/2 bg-gray-400 rounded-lg mx-auto mb-4"></div>
+          <div className="h-6 md:h-8 w-5/6 md:w-2/3 bg-gray-400 rounded mx-auto mb-2"></div>
+          <div className="h-6 md:h-8 w-4/6 md:w-1/2 bg-gray-400 rounded mx-auto"></div>
         </div>
       </section>
 
-      {/* Recent Jobs Skeleton Grid */}
-      <section className="relative">
-        <div className="flex justify-between items-center mb-4 relative overflow-hidden">
-          {shimmerLayer}
-          <div className="w-48 h-6 bg-gray-200 rounded"></div>
-          <div className="w-20 h-6 bg-gray-200 rounded hidden md:block"></div>
+      {/* Latest Jobs Section */}
+      <section>
+        <div className="flex mb-2 md:mb-6 relative overflow-hidden">
+          <ShimmerOverlay />
+          <div className="h-8 md:h-10 w-48 md:w-64 bg-gray-300 rounded-md"></div>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-          {[...Array(3)].map((_, i) => (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {[...Array(3)].map((_, index) => (
             <div
-              key={i}
-              className="relative bg-gray-100 p-4 md:p-6 rounded-lg shadow-sm space-y-3 overflow-hidden"
+              key={index}
+              className="group relative block bg-white border border-gray-200 rounded-xl shadow-sm p-5 overflow-hidden"
             >
-              {shimmerLayer}
-              <div className="w-2/3 h-5 bg-gray-200 rounded"></div>
-              <div className="w-1/2 h-3 bg-gray-200 rounded"></div>
+              <ShimmerOverlay />
+              {/* Job content skeleton remains the same */}
+              <div className="flex items-center gap-1.5 mb-3">
+                <div className="h-6 w-32 bg-gray-300 rounded"></div>
+                <div className="h-4 w-20 bg-gray-300 rounded"></div>
+              </div>
 
-              <div className="flex justify-between">
-                <div className="space-y-2">
-                  <div className="w-24 h-3 bg-gray-200 rounded"></div>
-                  <div className="w-28 h-3 bg-gray-200 rounded"></div>
-                  <div className="w-32 h-3 bg-gray-200 rounded"></div>
+              <div className="space-y-2 text-sm mb-4">
+                <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-1">
+                    <div className="h-4 w-4 bg-gray-300 rounded-full"></div>
+                    <div className="h-4 w-24 bg-gray-300 rounded"></div>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="h-4 w-4 bg-gray-300 rounded-full"></div>
+                    <div className="h-4 w-20 bg-gray-300 rounded"></div>
+                  </div>
                 </div>
-                <div className="w-24 h-16 bg-gray-200 rounded-md"></div>
+
+                <div className="flex justify-between">
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-1">
+                      <div className="h-4 w-4 bg-gray-300 rounded-full"></div>
+                      <div className="h-4 w-28 bg-gray-300 rounded"></div>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="h-4 w-4 bg-gray-300 rounded-full"></div>
+                      <div className="h-4 w-32 bg-gray-300 rounded"></div>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <div className="h-4 w-4 bg-gray-300 rounded-full"></div>
+                      <div className="h-4 w-36 bg-gray-300 rounded"></div>
+                    </div>
+                  </div>
+                  <div className="w-24 h-16 bg-gray-300 rounded-md"></div>
+                </div>
               </div>
 
-              <div className="flex flex-wrap gap-2">
-                {[...Array(4)].map((_, s) => (
-                  <div key={s} className="w-12 h-4 bg-gray-200 rounded"></div>
-                ))}
+              <div className="flex flex-wrap gap-1 mb-3">
+                <div className="h-6 w-16 bg-gray-300 rounded-md"></div>
+                <div className="h-6 w-20 bg-gray-300 rounded-md"></div>
+                <div className="h-6 w-14 bg-gray-300 rounded-md"></div>
               </div>
 
-              <div className="border-t pt-2 flex justify-between">
-                <div className="w-24 h-3 bg-gray-200 rounded"></div>
-                <div className="w-16 h-3 bg-gray-200 rounded"></div>
+              <div className="mt-auto flex items-center justify-between border-t pt-3">
+                <div className="h-4 w-24 bg-gray-300 rounded"></div>
+                <div className="h-4 w-20 bg-gray-300 rounded hidden md:block"></div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Explore All Jobs Button */}
         <div className="text-center md:text-right mt-10 relative overflow-hidden">
-          {shimmerLayer}
-          <div className="inline-block w-40 md:w-48 h-10 bg-gray-200 rounded-md"></div>
+          <ShimmerOverlay />
+          <div className="inline-block h-12 w-48 bg-gray-300 rounded-md"></div>
         </div>
       </section>
     </div>
   );
-}
+};
+
+export default HomeSkeletonWithShimmer;

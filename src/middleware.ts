@@ -3,19 +3,8 @@ import type { NextRequest } from "next/server";
 
 // Define routes inline to avoid imports
 const apiAuthPrefix = "/api/auth";
-const authRoutes = [
-  "/auth/signin",
-  "/auth/register",
-  "/auth/reset",
-  "/newPassword",
-  "/auth/error",
-];
-const publicRoutes = [
-  "/",
-  "/verifyEmail",
-  "/settings",
-  "/jobs",
-];
+const authRoutes = [ "/auth/signin", "/auth/register", "/auth/reset", "/newPassword", "/auth/error"];
+const publicRoutes = [ "/", "/verifyEmail", "/settings", "/jobs"];
 const Default_Login_Redirect = "/dashboard";
 
 export default function middleware(request: NextRequest) {
@@ -29,8 +18,7 @@ export default function middleware(request: NextRequest) {
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
-  const isAdminRoute = nextUrl.pathname.startsWith("/admin") || 
-                      nextUrl.pathname.startsWith("/api/admin");
+  const isAdminRoute = nextUrl.pathname.startsWith("/admin") || nextUrl.pathname.startsWith("/api/admin");
 
   // Allow API auth routes and all API routes
   if (isApiAuthRoute || nextUrl.pathname.startsWith("/api")) {
@@ -77,9 +65,7 @@ export default function middleware(request: NextRequest) {
 
 
 export const config = {
-  matcher: [    "/dashboard/",
-    "/admin/", 
-    "/profile/"],
+  matcher: [ "/dashboard/", "/admin/", "/profile/"],
 };
 
 

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
 import { applicants } from "@/actions/applicants";
+import { useSession } from 'next-auth/react';
 
 type DropdownProps = {
   jobId: any;
@@ -25,6 +26,12 @@ export default function StatusButton({
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const { data: session, update } = useSession();
+
+  if (!session) {
+    router.push("/auth/signin")
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

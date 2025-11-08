@@ -5,13 +5,10 @@ import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { CldUploadWidget } from "next-cloudinary";
 import { toast } from "react-hot-toast";
-import {
-  PencilLine,
-  Building2,
-  ListChecks,
-  FileText,
-  UploadCloud,
-} from "lucide-react";
+import { PencilLine, Building2, ListChecks, FileText, UploadCloud } from "lucide-react";
+import { useSession } from 'next-auth/react';
+
+
 
 type Job = {
   id: string;
@@ -34,16 +31,19 @@ type Job = {
 
 export default function EditJobPage() {
   const params = useParams();
-  const router = useRouter();
   const id = params?.id as string;
-
+  const router = useRouter();
   const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [formData, setFormData] = useState<Partial<Job>>({});
-
   const [skillsText, setSkillsText] = useState("");
   const [benefitsText, setBenefitsText] = useState("");
+  const { data: session, update } = useSession();
+
+  if (!session) {
+    router.push("/auth/signin")
+  };
 
   useEffect(() => {
     if (!id) return;
@@ -114,79 +114,79 @@ export default function EditJobPage() {
     }
   };
 
-if (loading)
-  return (
-    <div className="max-w-7xl mx-auto mt-4 sm:mt-6 p-4 sm:p-8 bg-white/70 rounded-sm sm:rounded-lg">
-      <div className="animate-pulse space-y-6">
-        {/* Header */}
-        <div className="flex flex-col items-center gap-2">
-          <div className="h-6 w-32 bg-slate-300/60 rounded"></div>
-          <div className="h-4 w-20 bg-slate-200/60 rounded"></div>
+  if (loading)
+    return (
+      <div className="max-w-7xl mx-auto mt-4 sm:mt-6 p-4 sm:p-8 bg-white/70 rounded-sm sm:rounded-lg">
+        <div className="animate-pulse space-y-6">
+          {/* Header */}
+          <div className="flex flex-col items-center gap-2">
+            <div className="h-6 w-32 bg-slate-300/60 rounded"></div>
+            <div className="h-4 w-20 bg-slate-200/60 rounded"></div>
+          </div>
+
+          {/* Logo placeholder */}
+          <div className="flex justify-center">
+            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-slate-200/70"></div>
+          </div>
+
+          {/* Job Info Section */}
+          <div className="bg-white/70 rounded-lg shadow p-6 space-y-4">
+            <div className="h-5 w-40 bg-slate-300 rounded"></div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="space-y-2">
+                  <div className="h-3 w-24 bg-slate-200 rounded"></div>
+                  <div className="h-8 w-full bg-slate-200 rounded-md"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Requirements Section */}
+          <div className="bg-white/70 rounded-lg shadow p-6 space-y-4">
+            <div className="h-5 w-36 bg-slate-300 rounded"></div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="space-y-2">
+                  <div className="h-3 w-24 bg-slate-200 rounded"></div>
+                  <div className="h-8 w-full bg-slate-200 rounded-md"></div>
+                </div>
+              ))}
+            </div>
+            <div className="space-y-2">
+              <div className="h-3 w-32 bg-slate-200 rounded"></div>
+              <div className="h-20 w-full bg-slate-200 rounded-md"></div>
+            </div>
+          </div>
+
+          {/* Job Details Section */}
+          <div className="bg-white/70 rounded-lg shadow p-6 space-y-4">
+            <div className="h-5 w-32 bg-slate-300 rounded"></div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {Array.from({ length: 2 }).map((_, i) => (
+                <div key={i} className="space-y-2">
+                  <div className="h-3 w-24 bg-slate-200 rounded"></div>
+                  <div className="h-8 w-full bg-slate-200 rounded-md"></div>
+                </div>
+              ))}
+            </div>
+
+            <div className="space-y-2">
+              <div className="h-3 w-28 bg-slate-200 rounded"></div>
+              <div className="h-20 w-full bg-slate-200 rounded-md"></div>
+            </div>
+
+            <div className="space-y-2">
+              <div className="h-3 w-40 bg-slate-200 rounded"></div>
+              <div className="h-16 w-full bg-slate-200 rounded-md"></div>
+            </div>
+          </div>
+
+          {/* Button Placeholder */}
+          <div className="h-10 w-full bg-slate-300 rounded-md"></div>
         </div>
-
-        {/* Logo placeholder */}
-        <div className="flex justify-center">
-          <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-slate-200/70"></div>
-        </div>
-
-        {/* Job Info Section */}
-        <div className="bg-white/70 rounded-lg shadow p-6 space-y-4">
-          <div className="h-5 w-40 bg-slate-300 rounded"></div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="space-y-2">
-                <div className="h-3 w-24 bg-slate-200 rounded"></div>
-                <div className="h-8 w-full bg-slate-200 rounded-md"></div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Requirements Section */}
-        <div className="bg-white/70 rounded-lg shadow p-6 space-y-4">
-          <div className="h-5 w-36 bg-slate-300 rounded"></div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="space-y-2">
-                <div className="h-3 w-24 bg-slate-200 rounded"></div>
-                <div className="h-8 w-full bg-slate-200 rounded-md"></div>
-              </div>
-            ))}
-          </div>
-          <div className="space-y-2">
-            <div className="h-3 w-32 bg-slate-200 rounded"></div>
-            <div className="h-20 w-full bg-slate-200 rounded-md"></div>
-          </div>
-        </div>
-
-        {/* Job Details Section */}
-        <div className="bg-white/70 rounded-lg shadow p-6 space-y-4">
-          <div className="h-5 w-32 bg-slate-300 rounded"></div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {Array.from({ length: 2 }).map((_, i) => (
-              <div key={i} className="space-y-2">
-                <div className="h-3 w-24 bg-slate-200 rounded"></div>
-                <div className="h-8 w-full bg-slate-200 rounded-md"></div>
-              </div>
-            ))}
-          </div>
-
-          <div className="space-y-2">
-            <div className="h-3 w-28 bg-slate-200 rounded"></div>
-            <div className="h-20 w-full bg-slate-200 rounded-md"></div>
-          </div>
-
-          <div className="space-y-2">
-            <div className="h-3 w-40 bg-slate-200 rounded"></div>
-            <div className="h-16 w-full bg-slate-200 rounded-md"></div>
-          </div>
-        </div>
-
-        {/* Button Placeholder */}
-        <div className="h-10 w-full bg-slate-300 rounded-md"></div>
       </div>
-    </div>
-  );
+    );
 
 
   return (

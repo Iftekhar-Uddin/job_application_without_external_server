@@ -15,8 +15,8 @@ const ResetPassword = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  // const router = useRouter();
   const { data: session, update } = useSession();
+
 
 
   const { register, handleSubmit, formState: { errors } } = useForm<z.infer<typeof ResetFormSchema>>({

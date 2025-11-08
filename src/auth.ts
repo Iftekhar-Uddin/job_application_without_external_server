@@ -6,6 +6,7 @@ import GitHub from "next-auth/providers/github"
 import Google from "next-auth/providers/google"
 import Credentials from "next-auth/providers/credentials"
 import { UserRole } from "@prisma/client"
+import { getTwoFactorConfirmationByUserId } from "./data/twoFactorConfirmation"
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma) as any,
@@ -28,7 +29,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" }
       },
-      async authorize(credentials) {
+      async authorize(credentials): Promise<any | null> {
         if (!credentials?.email || !credentials?.password) {
           return null
         }
@@ -39,6 +40,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
         if (!user || !user.password) {
           return null
+        }
+
+        if (user?.isTwoFactorEnabled) {
+          const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(user.id);
+          if (!twoFactorConfirmation) return false
+          await prisma.twoFactorConfirmation.delete({ where: { id: twoFactorConfirmation.id } });
         }
 
         const isPasswordValid = await bcrypt.compare(
@@ -68,24 +75,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     })
   ],
   callbacks: {
-    async jwt({ token, user }) {
-      if (user) {
-        token.id = user.id
-        token.name = user.name
-        token.email = user.email
-        token.role = (user as any).role
-        token.picture = (user as any).image
-        token.isTwoFactorEnabled = (user as any).isTwoFactorEnabled
-        token.education = (user as any).education
-        token.skills = (user as any).skills
-        token.experience = (user as any).experience
-        token.previousInstitution = (user as any).previousInstitution
-        token.address = (user as any).address
-        token.isOAuth = (user as any).isOAuth
-        token.updatedAt = (user as any).updatedAt
-      }
-      return token
-    },
 
     async session({ session, token }) {
       if (session.user) {
@@ -105,11 +94,45 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return session
     },
+
+
+    async jwt({ token, user, trigger, session }) {
+      if (user) {
+        token.id = user.id
+        token.name = user.name
+        token.email = user.email
+        token.role = (user as any).role
+        token.picture = (user as any).image
+        token.isTwoFactorEnabled = (user as any).isTwoFactorEnabled
+        token.education = (user as any).education
+        token.skills = (user as any).skills
+        token.experience = (user as any).experience
+        token.previousInstitution = (user as any).previousInstitution
+        token.address = (user as any).address
+        token.isOAuth = (user as any).isOAuth
+        token.updatedAt = (user as any).updatedAt
+      }
+
+      if (trigger === "update" && session?.user) {
+        return {
+          ...token,
+          ...session.user,
+          picture: session.user.image,
+          updatedAt: new Date().toISOString()
+        }
+      }
+
+      return token
+    },
+
   },
+
   pages: {
     signIn: "/auth/signin",
-    error: "/auth/error"
+    signOut: "/",
+    error: "/auth/error",
   },
+
 })
 
 
@@ -159,11 +182,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
 //         if (existingUser.isTwoFactorEnabled) {
 
-//           const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(existingUser.id);
+// const twoFactorConfirmation = await getTwoFactorConfirmationByUserId(existingUser.id);
 
-//           if (!twoFactorConfirmation) return false
+// if (!twoFactorConfirmation) return false
 
-//           await prisma.twoFactorConfirmation.delete({ where: { id: twoFactorConfirmation.id } });
+// await prisma.twoFactorConfirmation.delete({ where: { id: twoFactorConfirmation.id } });
 //         }
 
 //       } else if (account?.provider === "google" || "github") {

@@ -1,7 +1,9 @@
 "use server";
 
 import { signIn, signOut } from "@/auth";
-import { Default_Login_Redirect } from "@/routes";
+
+
+const Default_Login_Redirect= "/dashboard"
 
 
 // import { signIn, signOut } from "@/lib/auth";

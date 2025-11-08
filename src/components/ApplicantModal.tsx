@@ -2,6 +2,8 @@
 
 import React, { useEffect, useRef } from "react";
 import { X } from "lucide-react";
+import { useSession } from 'next-auth/react';
+import { useRouter } from "next/navigation";
 
 type ApplicantModalProps = {
   open: boolean;
@@ -13,6 +15,13 @@ type ApplicantModalProps = {
 
 export default function ApplicantModal({ open, onClose, title, children, size = "lg" }: ApplicantModalProps) {
   const dialogRef = useRef<HTMLDivElement | null>(null);
+  const router = useRouter();
+  const { data: session, update } = useSession();
+
+
+  if (!session) {
+    router.push("/auth/signin")
+  };
 
   // Prevent background scroll when open
   useEffect(() => {

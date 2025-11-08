@@ -13,11 +13,8 @@ import React from "react";
 
 
 const TotalJobs = async ({ searchParams }: any)  => {
-
-  const resolvedParams = await Promise.resolve(searchParams ?? {});
-
   const session = await auth();
-
+  const resolvedParams = await Promise.resolve(searchParams ?? {});
   const querys = (resolvedParams?.query as string) || "";
   const searchType = (resolvedParams?.type as string) || "";
   const searchLocation = (resolvedParams?.location as string) || "";

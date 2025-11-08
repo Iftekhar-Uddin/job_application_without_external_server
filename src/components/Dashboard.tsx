@@ -4,17 +4,11 @@ import React, { useMemo, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
-import {
-  BrainCog,
-  CalendarClock,
-  DollarSign,
-  Search,
-  List,
-  Grid,
-} from "lucide-react";
-
+import { BrainCog, CalendarClock, DollarSign, Search, List, Grid } from "lucide-react";
 import StatusButton from "@/components/StatusButton";
 import ApplicantModal from "./ApplicantModal";
+import { useRouter } from "next/navigation";
+import { useSession } from 'next-auth/react';
 
 
 type Job = {
@@ -69,12 +63,16 @@ export default function DashboardIntegrated({
   const [layout, setLayout] = useState<"list" | "grid">("list");
   const [query, setQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<"All" | "Reviewing" | "Accepted" | "Rejected">("All");
-
-
   const [openJob, setOpenJob] = useState<Job | null>(null);
   const [applicants, setApplicants] = useState<Application[] | null>(null);
   const [loadingApplicants, setLoadingApplicants] = useState(false);
   const [applicantsError, setApplicantsError] = useState<string | null>(null);
+  const router = useRouter();
+  const { data: session, update } = useSession();
+
+  if (!session) {
+    router.push("/auth/signin")
+  };
 
 
   const stats = useMemo(() => ({

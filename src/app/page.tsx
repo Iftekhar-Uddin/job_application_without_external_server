@@ -41,7 +41,7 @@ export default async function Home() {
 
       <section>
         <div className="flex justify-between items-center mb-2 md:mb-6">
-          <h2 className="text-xl md:text-3xl font-bold rounded-md text-white/70">
+          <h2 className="text-xl md:text-3xl font-bold rounded-md text-orange-400">
             Latest Job Openings
           </h2>
 
