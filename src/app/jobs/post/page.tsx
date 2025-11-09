@@ -22,6 +22,7 @@ interface FormErrors {
   location?: string;
   jobplace?: string;
   website?: string;
+  salary?: string;
 }
 
 interface FormData {
@@ -100,8 +101,15 @@ export default function PostYourJob() {
         break;
       
       case "vacancies":
-        if (!value || parseInt(value) < 1) return "At least 1 vacancy is required";
-        if (parseInt(value) > 100) return "Vacancies cannot exceed 100";
+        if (!value || value === "") return "Number of vacancies is required";
+        const vacanciesNum = parseInt(value);
+        if (isNaN(vacanciesNum) || vacanciesNum < 1) return "At least 1 vacancy is required";
+        if (vacanciesNum > 100) return "Vacancies cannot exceed 100";
+        break;
+      
+      case "salary":
+        if (!value?.trim()) return "Salary information is required";
+        if (value.length < 3) return "Please provide salary details";
         break;
       
       case "deadline":
@@ -151,7 +159,7 @@ export default function PostYourJob() {
     const requiredFields = [
       'title', 'company', 'type', 'responsibilities', 
       'skills', 'education', 'experience', 'vacancies', 
-      'deadline', 'location', 'jobplace'
+      'salary', 'deadline', 'location', 'jobplace'
     ];
 
     const newErrors: FormErrors = {};
@@ -202,9 +210,9 @@ export default function PostYourJob() {
         skills: formData.skills as string,
         jobplace: formData.jobplace as string,
         benefits: formData.benefits || [],
-        vacancies: formData.vacancies as number,
+        vacancies: parseInt(formData.vacancies as any) || 1,
         education: formData.education as string,
-        salary: formData.salary || "",
+        salary: formData.salary as string || "Negotiable",
         experience: formData.experience as string,
         deadline: finalDeadline.toISOString(),
         location,
@@ -225,7 +233,7 @@ export default function PostYourJob() {
     const requiredFields = [
       'title', 'company', 'type', 'responsibilities', 
       'skills', 'education', 'experience', 'vacancies', 
-      'deadline', 'location', 'jobplace'
+      'salary', 'deadline', 'location', 'jobplace'
     ];
 
     return requiredFields.every(field => 
@@ -334,13 +342,14 @@ export default function PostYourJob() {
               onChange={(value) => handleInputChange('education', value)}
             />
             
-            <Input 
+            <NumberInput 
               label="Number of Vacancies" 
               name="vacancies" 
-              type="number" 
               required 
               error={errors.vacancies}
               onChange={(value) => handleInputChange('vacancies', value)}
+              min={1}
+              max={100}
             />
 
             <div>
@@ -376,9 +385,11 @@ export default function PostYourJob() {
             />
             
             <Input 
-              label="Salary (optional)" 
+              label="Salary" 
               name="salary" 
+              required
               placeholder="e.g., $30,000 - $45,000" 
+              error={errors.salary}
               onChange={(value) => handleInputChange('salary', value)}
             />
 
@@ -470,6 +481,48 @@ function Input({
         id={name}
         placeholder={placeholder}
         required={required}
+        onChange={(e) => onChange(e.target.value)}
+      />
+      {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
+    </div>
+  );
+}
+
+function NumberInput({
+  label,
+  name,
+  required = false,
+  placeholder = "",
+  error,
+  onChange,
+  min,
+  max,
+}: {
+  label: string;
+  name: string;
+  required?: boolean;
+  placeholder?: string;
+  error?: string;
+  onChange: (value: string) => void;
+  min?: number;
+  max?: number;
+}) {
+  return (
+    <div>
+      <label htmlFor={name} className="block text-sm font-medium text-gray-700">
+        {label} {required && <span className="text-red-500">*</span>}
+      </label>
+      <input
+        className={`mt-1 w-full border rounded-md px-3 py-1.5 text-gray-800 text-sm focus:ring-1 outline-none transition ${
+          error ? "border-red-500 focus:ring-red-300" : "border-slate-500 focus:ring-gray-400"
+        }`}
+        type="number"
+        name={name}
+        id={name}
+        placeholder={placeholder}
+        required={required}
+        min={min}
+        max={max}
         onChange={(e) => onChange(e.target.value)}
       />
       {error && <p className="text-red-500 text-xs mt-1">{error}</p>}
