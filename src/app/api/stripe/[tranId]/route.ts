@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
 const TranIdSchema = z.object({
-  tranId: z.string().uuid(),
+  tranId: z.string().regex(/^cs_(test|live)_[a-zA-Z0-9]+$/, "Invalid Stripe session ID format"),
 });
 
 export async function GET(
@@ -17,7 +17,7 @@ export async function GET(
     const validationResult = TranIdSchema.safeParse({ tranId });
     if (!validationResult.success) {
       return NextResponse.json(
-        { error: "Invalid transaction ID format" },
+        { error: "Invalid transaction ID" },
         { status: 400 }
       );
     }
@@ -29,14 +29,15 @@ export async function GET(
       },
       include: { 
         job: {
-          include: {
-            postedBy: {
-              select: {
-                id: true,
-                name: true,
-                email: true,
-              },
-            },
+          select: {
+            id: true,
+            title: true,
+            company: true,
+            logo: true,
+            website: true,
+            location: true,
+            type: true,
+            status: true,
           },
         },
       },
@@ -49,20 +50,16 @@ export async function GET(
       );
     }
 
-    // Return sanitized payment data
+    // Return payment data matching your frontend expectations
     const responseData = {
       id: payment.id,
-      status: payment.status,
+      tranId: payment.tranId,
       amount: payment.amount,
       currency: payment.currency,
+      provider: payment.provider,
+      status: payment.status,
       createdAt: payment.createdAt,
-      job: {
-        id: payment.job.id,
-        title: payment.job.title,
-        company: payment.job.company,
-        status: payment.job.status,
-        postedBy: payment.job.postedBy,
-      },
+      job: payment.job,
     };
 
     return NextResponse.json(responseData);
@@ -73,4 +70,4 @@ export async function GET(
       { status: 500 }
     );
   }
-}
+};

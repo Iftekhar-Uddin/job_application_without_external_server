@@ -35,7 +35,7 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
+    <div className="h-[calc(100vh-10rem)] bg-white/70 py-12 max-w-7xl mx-auto ">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -67,7 +67,7 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Email Us</h3>
-                    <p className="text-gray-600 mt-1">support@jobportal.com</p>
+                    <p className="text-gray-600 mt-1">iftekharuddin720@gmail.com</p>
                     <p className="text-sm text-gray-500">We'll respond within 24 hours</p>
                   </div>
                 </div>
@@ -78,8 +78,8 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">Call Us</h3>
-                    <p className="text-gray-600 mt-1">+880 1XXX-XXXXXX</p>
-                    <p className="text-sm text-gray-500">Mon-Fri from 9am to 6pm</p>
+                    <p className="text-gray-600 mt-1">+880 1731-615141</p>
+                    <p className="text-sm text-gray-500">Sun-Thu from 9am to 6pm</p>
                   </div>
                 </div>
 
@@ -132,7 +132,7 @@ export default function ContactPage() {
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-slate-400-500 focus:border-slate-500 transition-colors"
                       placeholder="Your full name"
                     />
                   </div>
@@ -148,7 +148,7 @@ export default function ContactPage() {
                       required
                       value={formData.email}
                       onChange={handleChange}
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-slate-400-500 focus:border-slate-500 transition-colors"
                       placeholder="your@email.com"
                     />
                   </div>
@@ -164,7 +164,7 @@ export default function ContactPage() {
                     required
                     value={formData.category}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-slate-400-500 focus:border-slate-500 transition-colors"
                   >
                     <option value="payment">Payment Issue</option>
                     <option value="technical">Technical Problem</option>
@@ -185,7 +185,7 @@ export default function ContactPage() {
                     required
                     value={formData.subject}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-slate-400-500 focus:border-slate-500 transition-colors"
                     placeholder="Brief description of your issue"
                   />
                 </div>
@@ -201,7 +201,7 @@ export default function ContactPage() {
                     rows={6}
                     value={formData.message}
                     onChange={handleChange}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-vertical"
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-slate-400-500 focus:border-slate-500 transition-colors resize-vertical"
                     placeholder="Please describe your issue in detail..."
                   />
                 </div>

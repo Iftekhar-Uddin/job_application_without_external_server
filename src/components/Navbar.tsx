@@ -138,6 +138,13 @@ const Navbar = () => {
                   >
                     Dashboard
                   </Link>
+                  <Link
+                    onClick={handleToggleMenu}
+                    href="/contact"
+                    className="text-slate-500 md:ring-1 rounded-full px-3.5 md:px-2 lg:px-3 hover:bg-slate-200 cursor-pointer transition"
+                  >
+                    Contact
+                  </Link>
                   {/* {currentUser?.role === "Admin" && (
                     <Link
                       onClick={handleToggleMenu}
