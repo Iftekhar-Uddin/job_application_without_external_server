@@ -31,7 +31,7 @@ export default function PaymentSuccessPage() {
   const search = useSearchParams();
   const [payment, setPayment] = useState<PaymentWithJob | null>(null);
   const [loading, setLoading] = useState(true);
-  const tranId = search.get("tranId");
+  const tranId = search.get("session_id");
 
   useEffect(() => {
     if (!tranId) return;

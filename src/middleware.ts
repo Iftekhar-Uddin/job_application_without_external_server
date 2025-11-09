@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 // Define routes inline to avoid imports
 const apiAuthPrefix = "/api/auth";
 const authRoutes = [ "/auth/signin", "/auth/register", "/auth/reset", "/newPassword", "/auth/error"];
-const publicRoutes = [ "/", "/verifyEmail", "/settings", "/jobs"];
+const publicRoutes = [ "/", "/verifyEmail", "/settings", "/jobs", "/contact",];
 const Default_Login_Redirect = "/dashboard";
 
 export default function middleware(request: NextRequest) {
