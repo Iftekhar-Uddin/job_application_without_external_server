@@ -1,52 +1,60 @@
 import { NextResponse } from "next/server";
-import SSLCommerz from "sslcommerz-lts";
 import { prisma } from "@/lib/prisma";
 
-export const runtime = "nodejs";
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const tranId = searchParams.get("session");
 
-export async function POST(req: Request) {
-  const formData = await req.formData();
-  const tran_id = formData.get("tran_id") as string;
-  const val_id = formData.get("val_id") as string;
-
-  if (!tran_id) return NextResponse.json({ error: "Missing tran_id" }, { status: 400 });
-
-  const store_id = process.env.SSLCZ_STORE_ID!;
-  const store_passwd = process.env.SSLCZ_STORE_PASSWD!;
-  const is_live = process.env.SSLCZ_IS_SANDBOX !== "true";
-  const sslcz = new SSLCommerz(store_id, store_passwd, is_live);
+  if (!tranId) {
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=error`);
+  }
 
   try {
-    const validation = await sslcz.validate({ val_id });
+    // Wait a moment for IPN to process
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
-    const isSuccess = validation && ["VALID", "VALIDATED", "Completed"].includes(validation.status);
+    const payment = await prisma.payment.findFirst({
+      where: { tranId },
+      include: { job: true },
+    });
 
-    if (isSuccess) {
-      // Extract jobId from tran_id
-      const jobId = tran_id.split("-")[0];
+    if (!payment) {
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=invalid`);
+    }
 
-      await prisma.job.update({
-        where: { id: jobId },
-        data: { status: "PUBLISHED" },
-      });
-
-      await prisma.payment.updateMany({
-        where: { jobId },
-        data: { status: "SUCCESS" },
-      });
-
+    // Check if IPN already processed this
+    if (payment.status === "SUCCESS") {
       return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_APP_URL}/jobs/${jobId}?payment=success`
-      );
-    } else {
-      return NextResponse.redirect(
-        `${process.env.NEXT_PUBLIC_APP_URL}/post/submit?payment=failed`
+        `${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=success&jobId=${payment.jobId}`
       );
     }
-  } catch (err) {
-    console.error("SSLCommerz validation error:", err);
+
+    // If IPN hasn't processed yet, update based on redirect
+    const currentMeta = (payment.meta as any) || {};
+    const updatedMeta = {
+      ...currentMeta,
+      success_redirect_time: new Date().toISOString(),
+    };
+
+    await prisma.payment.update({
+      where: { id: payment.id },
+      data: { 
+        status: "SUCCESS",
+        meta: updatedMeta,
+      },
+    });
+
+    await prisma.job.update({
+      where: { id: payment.jobId },
+      data: { status: "PUBLISHED" },
+    });
+
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_APP_URL}/post/submit?payment=failed`
+      `${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=success&jobId=${payment.jobId}`
     );
+
+  } catch (error) {
+    console.error("Payment success handler error:", error);
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=error`);
   }
 }

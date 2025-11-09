@@ -1,15 +1,49 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function POST(req: Request) {
-  const formData = await req.formData();
-  const tran_id = formData.get("tran_id") as string;
-  if (tran_id) {
-    const jobId = tran_id.split("-")[0];
-    await prisma.payment.updateMany({
-      where: { jobId },
-      data: { status: "FAILED" },
-    });
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const tranId = searchParams.get("session");
+
+  if (!tranId) {
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=error`);
   }
-  return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/jobs`);
+
+  try {
+    const payment = await prisma.payment.findFirst({
+      where: { tranId },
+    });
+
+    if (payment) {
+      // Prepare updated meta data
+      const currentMeta = payment.meta as any || {};
+      const updatedMeta = {
+        ...currentMeta,
+        fail_time: new Date().toISOString(),
+        status: "FAILED",
+      };
+
+      await prisma.payment.update({
+        where: { id: payment.id },
+        data: { 
+          status: "FAILED",
+          meta: updatedMeta,
+        },
+      });
+
+      // Update job status
+      await prisma.job.update({
+        where: { id: payment.jobId },
+        data: { status: "REJECTED" },
+      });
+    }
+
+    return NextResponse.redirect(
+      `${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=failed&tranId=${tranId}`
+    );
+
+  } catch (error) {
+    console.error("Payment fail handler error:", error);
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=error`);
+  }
 }

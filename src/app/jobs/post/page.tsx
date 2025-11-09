@@ -106,16 +106,7 @@ export default function PostYourJob() {
             <Select
               label="Experience"
               name="experience"
-              options={[
-                "Freshers",
-                "6 Months",
-                "0-1 year",
-                "1-2 years",
-                "2-3 years",
-                "3-5 years",
-                "5-8 years",
-                "Above 8 years",
-              ]}
+              options={[ "Freshers", "6 Months", "0-1 year", "1-2 years", "2-3 years", "3-5 years", "5-8 years", "Above 8 years"]}
               required
             />
 
@@ -126,16 +117,7 @@ export default function PostYourJob() {
             <div>
               <p className="text-sm font-medium text-gray-700 mb-2">Compensation & Benefits</p>
               <div className="flex flex-wrap gap-2 text-xs md:text-sm">
-                {[
-                  "Salary Review: Yearly",
-                  "Lunch Facilities: Partially Subsidize",
-                  "5 Days Work Week",
-                  "Festival Bonus: 2",
-                  "Professional Development",
-                  "Snacks, Tea & Coffee",
-                  "Health Insurance",
-                  "Others",
-                ].map((benefit) => (
+                {[ "Salary Review: Yearly", "Lunch Facilities: Partially Subsidize", "5 Days Work Week", "Festival Bonus: 2", "Professional Development", "Snacks, Tea & Coffee", "Health Insurance", "Others",].map((benefit) => (
                   <label key={benefit} className="flex items-center gap-1">
                     <input type="checkbox" name="benefits" value={benefit} />
                     {benefit}

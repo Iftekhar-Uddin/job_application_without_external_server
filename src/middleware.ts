@@ -11,9 +11,7 @@ export default function middleware(request: NextRequest) {
   const { nextUrl } = request;
   
   // Check authentication using cookies only (NO auth import)
-  const isLoggedIn = 
-    request.cookies.has("next-auth.session-token") ||
-    request.cookies.has("__Secure-next-auth.session-token");
+  const isLoggedIn = request.cookies.has("next-auth.session-token") || request.cookies.has("__Secure-next-auth.session-token");
   
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
