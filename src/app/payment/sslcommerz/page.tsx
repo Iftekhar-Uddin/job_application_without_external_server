@@ -1,7 +1,7 @@
+// app/payment/sslcommerz/page.tsx
 "use client";
 
-import { Suspense } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { Suspense, useEffect, useState } from "react";
 import { 
   CheckCircle, 
   XCircle, 
@@ -10,15 +10,26 @@ import {
   Clock
 } from "lucide-react";
 
-// Remove the async and make it a client component
-export default function PaymentStatusPage({ 
-  searchParams 
-}: { 
-  searchParams: { [key: string]: string | string[] | undefined }
-}) {
-  const paymentStatus = Array.isArray(searchParams.payment) ? searchParams.payment[0] : searchParams.payment;
-  const jobId = Array.isArray(searchParams.jobId) ? searchParams.jobId[0] : searchParams.jobId;
-  const tranId = Array.isArray(searchParams.tranId) ? searchParams.tranId[0] : searchParams.tranId;
+function PaymentStatusContent() {
+  const [params, setParams] = useState<{ 
+    payment?: string; 
+    jobId?: string; 
+    tranId?: string; 
+  }>({});
+
+  useEffect(() => {
+    // Get search params from URL on client side
+    const urlParams = new URLSearchParams(window.location.search);
+    setParams({
+      payment: urlParams.get('payment') || undefined,
+      jobId: urlParams.get('jobId') || undefined,
+      tranId: urlParams.get('tranId') || undefined,
+    });
+  }, []);
+
+  const paymentStatus = params.payment;
+  const jobId = params.jobId;
+  const tranId = params.tranId;
 
   const getNotificationConfig = (status: string | undefined) => {
     switch (status) {
@@ -82,6 +93,17 @@ export default function PaymentStatusPage({
   };
 
   const notification = getNotificationConfig(paymentStatus);
+
+  if (!params.payment) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading payment status...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -175,5 +197,21 @@ export default function PaymentStatusPage({
         </div>
       </div>
     </div>
+  );
+}
+
+// Main component - no props needed for Next.js 15
+export default function PaymentStatusPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading payment status...</p>
+        </div>
+      </div>
+    }>
+      <PaymentStatusContent />
+    </Suspense>
   );
 }
