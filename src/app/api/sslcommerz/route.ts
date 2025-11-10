@@ -102,7 +102,7 @@ export async function POST(req: Request) {
 
     const result = await response.json();
 
-    console.log("SSLCommerz Response:", result); // Add this for debugging
+    console.log("SSLCommerz Response:", result);
 
     // Fix: Check for successful payment initiation more flexibly
     if (!result.status || result.status === "FAILED" || result.status === "INVALID") {

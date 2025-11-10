@@ -59,9 +59,9 @@ export default function SubmitJobPage() {
         body: JSON.stringify(draft),
       });
       const data = await res.json();
-      if (data.url || data.GatewayPageURL) {
+      if (data.url || data.gatewayPageURL) {
         dispatch(clearDraftJob());
-        window.location.href = data.url ?? data.GatewayPageURL;
+        window.location.href = data.url ?? data.gatewayPageURL;
       } else {
         console.error(data);
         alert("Payment initiation failed");
