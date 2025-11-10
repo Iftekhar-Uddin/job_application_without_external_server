@@ -11,13 +11,13 @@ export async function POST(request: Request) {
 }
 
 async function handlePaymentFailure(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const tranId = searchParams.get("session");
+  try {
+    const { searchParams } = new URL(request.url);
+    const tranId = searchParams.get("session");
 
-  console.log("Payment failure for tranId:", tranId);
+    console.log("Payment failed for tranId:", tranId);
 
-  if (tranId) {
-    try {
+    if (tranId) {
       const payment = await prisma.payment.findFirst({
         where: { tranId }
       });
@@ -27,20 +27,17 @@ async function handlePaymentFailure(request: Request) {
           where: { id: payment.id },
           data: { status: "FAILED" }
         });
-
-        await prisma.job.update({
-          where: { id: payment.jobId },
-          data: { status: "REJECTED" }
-        });
       }
-    } catch (error) {
-      console.error("Payment failure update error:", error);
     }
-  }
 
-  return NextResponse.redirect(
-    `${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=failed&tranId=${tranId}`
-  );
+    return NextResponse.redirect(
+      `${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=failed&tranId=${tranId}`
+    );
+
+  } catch (error) {
+    console.error("Payment failure error:", error);
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=error`);
+  }
 }
 
 

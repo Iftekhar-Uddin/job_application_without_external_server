@@ -11,16 +11,16 @@ export async function POST(request: Request) {
 }
 
 async function handlePaymentCancel(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const tranId = searchParams.get("session");
-
-  console.log("Payment cancellation for tranId:", tranId);
-
-  if (!tranId) {
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=error`);
-  }
-
   try {
+    const { searchParams } = new URL(request.url);
+    const tranId = searchParams.get("session");
+
+    console.log("Payment cancelled for tranId:", tranId);
+
+    if (!tranId) {
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=error`);
+    }
+
     const payment = await prisma.payment.findFirst({
       where: { tranId },
     });
@@ -41,7 +41,6 @@ async function handlePaymentCancel(request: Request) {
     return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=error`);
   }
 }
-
 
 
 

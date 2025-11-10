@@ -3,31 +3,32 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(request: Request) {
+  console.log("GET request to success callback");
   return handlePaymentSuccess(request);
 }
 
 export async function POST(request: Request) {
+  console.log("POST request to success callback");
   return handlePaymentSuccess(request);
 }
 
 async function handlePaymentSuccess(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const tranId = searchParams.get("session");
-
-  console.log("Payment success callback for tranId:", tranId);
-
-  if (!tranId) {
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=error`);
-  }
-
   try {
-    // Find the payment record
+    const { searchParams } = new URL(request.url);
+    const tranId = searchParams.get("session");
+    
+    console.log("Payment success for tranId:", tranId);
+
+    if (!tranId) {
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=error`);
+    }
+
     const payment = await prisma.payment.findFirst({
       where: { tranId },
     });
 
     if (!payment) {
-      console.error("Payment not found for tranId:", tranId);
+      console.log("Payment not found for tranId:", tranId);
       return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=invalid`);
     }
 
@@ -43,9 +44,8 @@ async function handlePaymentSuccess(request: Request) {
       }),
     ]);
 
-    console.log("Payment successful for job:", payment.jobId);
-
-    // Redirect to success page
+    console.log("Payment successful, redirecting to success page");
+    
     return NextResponse.redirect(
       `${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=success&jobId=${payment.jobId}`
     );
