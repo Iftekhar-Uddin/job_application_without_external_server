@@ -102,7 +102,10 @@ export async function POST(req: Request) {
 
     const result = await response.json();
 
-    if (result.status !== "SUCCESS") {
+    console.log("SSLCommerz Response:", result); // Add this for debugging
+
+    // Fix: Check for successful payment initiation more flexibly
+    if (!result.status || result.status === "FAILED" || result.status === "INVALID") {
       // Update job status if payment fails
       await prisma.job.update({
         where: { id: job.id },
@@ -115,24 +118,38 @@ export async function POST(req: Request) {
       );
     }
 
-    // Create payment record
-    await prisma.payment.create({
-      data: {
-        jobId: job.id,
-        provider: "SSLCOMMERZ",
-        tranId,
-        amount,
-        currency: "BDT",
-        status: "PENDING",
-      },
-    });
+    // If we have a GatewayPageURL, the payment initiation was successful
+    if (result.GatewayPageURL) {
+      // Create payment record
+      await prisma.payment.create({
+        data: {
+          jobId: job.id,
+          provider: "SSLCOMMERZ",
+          tranId,
+          amount,
+          currency: "BDT",
+          status: "PENDING",
+        },
+      });
 
-    return NextResponse.json({
-      success: true,
-      gatewayPageURL: result.GatewayPageURL,
-      tranId,
-      jobId: job.id,
-    });
+      return NextResponse.json({
+        success: true,
+        gatewayPageURL: result.GatewayPageURL,
+        tranId,
+        jobId: job.id,
+      });
+    } else {
+      // Handle case where GatewayPageURL is missing
+      await prisma.job.update({
+        where: { id: job.id },
+        data: { status: "REJECTED" },
+      });
+
+      return NextResponse.json(
+        { error: "Payment gateway URL not received" },
+        { status: 400 }
+      );
+    }
 
   } catch (error: any) {
     console.error("SSLCommerz error:", error);
