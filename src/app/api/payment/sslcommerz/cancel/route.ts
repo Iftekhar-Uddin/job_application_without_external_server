@@ -6,7 +6,7 @@ export async function GET(req: Request) {
   const tranId = searchParams.get("session");
 
   if (!tranId) {
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/cancelled`);
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=error`);
   }
 
   try {
@@ -22,12 +22,12 @@ export async function GET(req: Request) {
     }
 
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_APP_URL}/payment/cancelled?tranId=${tranId}`
+      `${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=cancelled`
     );
 
   } catch (error) {
     console.error("Payment cancel error:", error);
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/cancelled`);
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=error`);
   }
 }
 

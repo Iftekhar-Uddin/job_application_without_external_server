@@ -6,7 +6,7 @@ export async function GET(req: Request) {
   const tranId = searchParams.get("session");
 
   if (!tranId) {
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz/failed`);
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=error`);
   }
 
   try {
@@ -15,7 +15,7 @@ export async function GET(req: Request) {
     });
 
     if (!payment) {
-      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz/failed`);
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=invalid`);
     }
 
     // Update payment and job status
@@ -31,12 +31,12 @@ export async function GET(req: Request) {
     ]);
 
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz/success?tranId=${tranId}`
+      `${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?tranId=${tranId}`
     );
 
   } catch (error) {
-    console.error("Payment success error:", error);
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz`);
+    console.error("Payment success handler error:", error);
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=error`);
   }
 }
 
