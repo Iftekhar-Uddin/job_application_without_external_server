@@ -73,6 +73,7 @@ const Navbar = () => {
 
 
           <div ref={navRef} className="flex gap-6 md:gap-4 items-center">
+            
             {session && <Notification />}
 
             <button

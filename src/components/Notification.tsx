@@ -55,7 +55,7 @@ export default function Notification() {
             <button ref={buttonRef} onClick={() => setOpen(!open)} className="relative p-1.5 md:p-2 rounded-full text-slatee-500 flex hover:bg-slate-200">
                 <Bell className="w-5.5 h-5.5 rounded-full cursor-pointer text-slate-500"/>
                 {unredMessage.length > 0 && (
-                    <span className="absolute -top-2 -right-2 md:-top-1 md:-right-1 flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-black rounded-full">
+                    <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center w-4 h-4 text-xs font-bold text-white bg-black rounded-full">
                         {unredMessage.length}
                     </span>
                 )}

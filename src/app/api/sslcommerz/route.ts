@@ -90,7 +90,7 @@ export async function POST(req: Request) {
 
     // Initiate SSLCommerz payment
     const response = await fetch(
-      `https://sandbox.sslcommerz.com/gwprocess/v4/api.php`,
+      `https://sandbox.sslcommerz.com/gwprocess/v3/api.php`,
       {
         method: "POST",
         headers: {
