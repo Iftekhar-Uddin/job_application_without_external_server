@@ -1,7 +1,4 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   CheckCircle, 
@@ -12,24 +9,11 @@ import {
   Clock
 } from "lucide-react";
 
-export default function JobsPage() {
-  const searchParams = useSearchParams();
-  const paymentStatus = searchParams.get("payment");
-  const jobId = searchParams.get("jobId");
-  const tranId = searchParams.get("tranId");
-  
-  const [showNotification, setShowNotification] = useState(false);
-
-  useEffect(() => {
-    if (paymentStatus) {
-      setShowNotification(true);
-      const timer = setTimeout(() => {
-        setShowNotification(false);
-      }, 5000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [paymentStatus]);
+// Client component that uses searchParams
+function PaymentStatusContent({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
+  const paymentStatus = searchParams.payment as string;
+  const jobId = searchParams.jobId as string;
+  const tranId = searchParams.tranId as string;
 
   const getNotificationConfig = (status: string | null) => {
     switch (status) {
@@ -98,7 +82,7 @@ export default function JobsPage() {
     <div className="min-h-screen bg-gray-50">
       {/* Payment Status Notification */}
       <AnimatePresence>
-        {showNotification && notification && (
+        {notification && (
           <motion.div
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
@@ -133,7 +117,6 @@ export default function JobsPage() {
                   {paymentStatus === "success" && (
                     <button
                       onClick={() => {
-                        // Navigate to the posted job or jobs list
                         window.location.href = `/jobs?status=published`;
                       }}
                       className="text-xs bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition-colors"
@@ -145,8 +128,7 @@ export default function JobsPage() {
                   {(paymentStatus === "failed" || paymentStatus === "error") && (
                     <button
                       onClick={() => {
-                        // Retry payment or go back to job submission
-                        window.location.href = "/jobs/post/submit";
+                        window.location.href = "/jobs/post";
                       }}
                       className="text-xs bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition-colors"
                     >
@@ -155,7 +137,7 @@ export default function JobsPage() {
                   )}
                   
                   <button
-                    onClick={() => setShowNotification(false)}
+                    onClick={() => window.location.href = "/jobs"}
                     className="text-xs bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600 transition-colors"
                   >
                     Dismiss
@@ -163,7 +145,7 @@ export default function JobsPage() {
                 </div>
               </div>
               <button
-                onClick={() => setShowNotification(false)}
+                onClick={() => window.location.href = "/jobs"}
                 className="text-gray-400 hover:text-gray-600 transition-colors"
               >
                 <XCircle className="h-5 w-5" />
@@ -173,90 +155,110 @@ export default function JobsPage() {
         )}
       </AnimatePresence>
 
-      {/* Main Jobs Page Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Job Listings</h1>
-          <p className="text-gray-600 mt-2">
-            Find your next career opportunity or post a new job opening.
-          </p>
-        </div>
-
-        {/* Job Posting CTA */}
-        <div className="bg-white rounded-lg shadow-sm border p-6 mb-8">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-semibold text-gray-900">
-                Want to post a job?
-              </h2>
-              <p className="text-gray-600 mt-1">
-                Reach qualified candidates with our job posting platform.
+      {/* Main Content */}
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
+        <div className="bg-white rounded-lg shadow-sm border p-8">
+          {notification && (
+            <>
+              <notification.icon className={`h-16 w-16 mx-auto ${notification.color} mb-4`} />
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                {notification.title}
+              </h1>
+              <p className="text-gray-600 mb-6">
+                {notification.message}
               </p>
-            </div>
-            <button
-              onClick={() => window.location.href = "/jobs/submit"}
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-            >
-              <ExternalLink className="h-4 w-4" />
-              Post a Job
-            </button>
-          </div>
-        </div>
-
-        {/* Jobs List Content */}
-        <div className="grid gap-6">
-          {/* Example job cards - you'll replace this with real data */}
-          <div className="bg-white rounded-lg shadow-sm border p-6">
-            <h3 className="text-lg font-semibold text-gray-900">Senior Frontend Developer</h3>
-            <p className="text-gray-600 mt-1">Tech Company • Dhaka, Bangladesh</p>
-            <div className="flex flex-wrap gap-2 mt-3">
-              <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">React</span>
-              <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">TypeScript</span>
-              <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded">Next.js</span>
-            </div>
-            <div className="mt-4 flex items-center justify-between">
-              <span className="text-green-600 font-semibold">৳80,000 - ৳120,000</span>
-              <button className="text-blue-600 hover:text-blue-800 text-sm font-medium">
-                View Details →
-              </button>
-            </div>
-          </div>
-
-          {/* Add more job cards here */}
-        </div>
-
-        {/* Help Section for Payment Issues */}
-        {(paymentStatus === "failed" || paymentStatus === "error" || paymentStatus === "invalid") && (
-          <div className="mt-8 bg-yellow-50 border border-yellow-200 rounded-lg p-6">
-            <h3 className="text-lg font-semibold text-yellow-800 mb-2">
-              Need help with your payment?
-            </h3>
-            <p className="text-yellow-700 mb-4">
-              If you're experiencing issues with the payment process, here are some solutions:
-            </p>
-            <ul className="text-yellow-700 list-disc list-inside space-y-1 text-sm">
-              <li>Ensure your card has sufficient funds</li>
-              <li>Check if your card supports international transactions</li>
-              <li>Try using a different payment method</li>
-              <li>Contact your bank for authorization issues</li>
-            </ul>
-            <div className="mt-4 flex gap-3">
+              
+              {jobId && paymentStatus === "success" && (
+                <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                  <p className="text-sm text-gray-600">Job ID</p>
+                  <p className="font-mono text-lg font-semibold">{jobId}</p>
+                </div>
+              )}
+              
+              <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                {paymentStatus === "success" && (
+                  <>
+                    <button
+                      onClick={() => window.location.href = `/jobs/${jobId}`}
+                      className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
+                    >
+                      View Job Posting
+                    </button>
+                    <button
+                      onClick={() => window.location.href = "/jobs/post"}
+                      className="border border-green-600 text-green-600 px-6 py-3 rounded-lg hover:bg-green-50 transition-colors"
+                    >
+                      Post Another Job
+                    </button>
+                  </>
+                )}
+                
+                {(paymentStatus === "failed" || paymentStatus === "error") && (
+                  <>
+                    <button
+                      onClick={() => window.location.href = "/jobs/post"}
+                      className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                    >
+                      Try Again
+                    </button>
+                    <button
+                      onClick={() => window.location.href = "/contact"}
+                      className="border border-blue-600 text-blue-600 px-6 py-3 rounded-lg hover:bg-blue-50 transition-colors"
+                    >
+                      Contact Support
+                    </button>
+                  </>
+                )}
+                
+                <button
+                  onClick={() => window.location.href = "/jobs"}
+                  className="border border-gray-600 text-gray-600 px-6 py-3 rounded-lg hover:bg-gray-50 transition-colors"
+                >
+                  Browse Jobs
+                </button>
+              </div>
+            </>
+          )}
+          
+          {!notification && (
+            <>
+              <Info className="h-16 w-16 mx-auto text-gray-400 mb-4" />
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">
+                Payment Status
+              </h1>
+              <p className="text-gray-600 mb-6">
+                No payment status information available.
+              </p>
               <button
-                onClick={() => window.location.href = "/contact"}
-                className="bg-yellow-600 text-white px-4 py-2 rounded hover:bg-yellow-700 transition-colors text-sm"
+                onClick={() => window.location.href = "/jobs"}
+                className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
               >
-                Contact Support
+                Go to Jobs
               </button>
-              <button
-                onClick={() => window.location.href = "/jobs/posts/submit"}
-                className="border border-yellow-600 text-yellow-600 px-4 py-2 rounded hover:bg-yellow-100 transition-colors text-sm"
-              >
-                Try Again
-              </button>
-            </div>
-          </div>
-        )}
+            </>
+          )}
+        </div>
       </div>
     </div>
+  );
+}
+
+// Main server component
+export default function PaymentStatusPage({ 
+  searchParams 
+}: { 
+  searchParams: { [key: string]: string | string[] | undefined } 
+}) {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading payment status...</p>
+        </div>
+      </div>
+    }>
+      <PaymentStatusContent searchParams={searchParams} />
+    </Suspense>
   );
 }
