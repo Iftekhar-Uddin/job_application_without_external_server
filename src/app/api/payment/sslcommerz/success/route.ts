@@ -1,3 +1,4 @@
+// app/api/payment/sslcommerz/success/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
@@ -13,30 +14,20 @@ async function handlePaymentSuccess(request: Request) {
   const { searchParams } = new URL(request.url);
   const tranId = searchParams.get("session");
 
-  // For POST requests, SSLCommerz might also send data in the body
-  let bodyTranId = null;
-  if (request.method === "POST") {
-    try {
-      const body = await request.text();
-      const params = new URLSearchParams(body);
-      bodyTranId = params.get("tran_id") || params.get("session");
-    } catch (error) {
-      console.error("Error reading POST body:", error);
-    }
-  }
+  console.log("Payment success callback for tranId:", tranId);
 
-  const finalTranId = tranId || bodyTranId;
-
-  if (!finalTranId) {
+  if (!tranId) {
     return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=error`);
   }
 
   try {
+    // Find the payment record
     const payment = await prisma.payment.findFirst({
-      where: { tranId: finalTranId },
+      where: { tranId },
     });
 
     if (!payment) {
+      console.error("Payment not found for tranId:", tranId);
       return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=invalid`);
     }
 
@@ -52,6 +43,9 @@ async function handlePaymentSuccess(request: Request) {
       }),
     ]);
 
+    console.log("Payment successful for job:", payment.jobId);
+
+    // Redirect to success page
     return NextResponse.redirect(
       `${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=success&jobId=${payment.jobId}`
     );

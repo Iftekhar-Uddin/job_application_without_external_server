@@ -1,3 +1,4 @@
+// app/api/payment/sslcommerz/fail/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
@@ -12,6 +13,8 @@ export async function POST(request: Request) {
 async function handlePaymentFailure(request: Request) {
   const { searchParams } = new URL(request.url);
   const tranId = searchParams.get("session");
+
+  console.log("Payment failure for tranId:", tranId);
 
   if (tranId) {
     try {

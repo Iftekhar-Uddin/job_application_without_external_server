@@ -1,17 +1,20 @@
+// app/api/payment/sslcommerz/cancel/route.ts
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
-export async function GET(req: Request) {
-  return handleCancel(req);
+export async function GET(request: Request) {
+  return handlePaymentCancel(request);
 }
 
-export async function POST(req: Request) {
-  return handleCancel(req);
+export async function POST(request: Request) {
+  return handlePaymentCancel(request);
 }
 
-async function handleCancel(req: Request) {
-  const { searchParams } = new URL(req.url);
+async function handlePaymentCancel(request: Request) {
+  const { searchParams } = new URL(request.url);
   const tranId = searchParams.get("session");
+
+  console.log("Payment cancellation for tranId:", tranId);
 
   if (!tranId) {
     return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=error`);
@@ -30,7 +33,7 @@ async function handleCancel(req: Request) {
     }
 
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=cancelled`
+      `${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=cancelled&tranId=${tranId}`
     );
 
   } catch (error) {
