@@ -47,8 +47,7 @@ async function handlePaymentSuccess(request: Request) {
     console.log("Payment successful, redirecting to success page");
     
     return NextResponse.redirect(
-      // `${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=success&jobId=${payment.jobId}`
-      `${process.env.NEXT_PUBLIC_APP_URL}/dashboard`
+      `${process.env.NEXT_PUBLIC_APP_URL}/payment/success?payment=success&jobId=${payment.jobId}`
     );
 
   } catch (error) {

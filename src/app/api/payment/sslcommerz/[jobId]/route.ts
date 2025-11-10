@@ -2,30 +2,30 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { z } from "zod";
 
-const TranIdSchema = z.object({
-  tranId: z.string().regex(/^cs_(test|live)_[a-zA-Z0-9]+$/, "Invalid Stripe session ID format"),
+const jobIdSchema = z.object({
+  jobId: z.string().regex(/^cmh[a-z0-9]{20,}$/, "Invalid job ID format"),
 });
 
 export async function GET(
   req: Request,
-  { params }: { params: Promise<{ tranId: string }> }
+  { params }: { params: Promise<{ jobId: string }> }
 ) {
   try {
-    const { tranId } = await params;
+    const { jobId } = await params;
 
 
-    const validationResult = TranIdSchema.safeParse({ tranId });
+    const validationResult = jobIdSchema.safeParse({ jobId });
     if (!validationResult.success) {
       return NextResponse.json(
-        { error: "Invalid transaction ID" },
+        { error: "Invalid job ID" },
         { status: 400 }
       );
     }
 
     const payment = await prisma.payment.findFirst({
       where: { 
-        tranId,
-        provider: "STRIPE",
+        jobId,
+        provider: "SSLCOMMERZ",
       },
       include: { 
         job: {

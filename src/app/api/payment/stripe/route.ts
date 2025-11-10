@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/auth";
 import { z } from "zod";
 
+
 // Validation schema
 const JobPostSchema = z.object({
   title: z.string().min(1, "Title is required").max(200),
@@ -117,7 +118,7 @@ export async function POST(req: Request) {
           },
         ],
         mode: "payment",
-        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+        success_url: `${process.env.NEXT_PUBLIC_APP_URL}/payment/success?payment=success&session_id={CHECKOUT_SESSION_ID}`,
         cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/jobs/post?cancelled=true`,
         customer_email: user.email!,
         client_reference_id: job.id,
@@ -150,7 +151,7 @@ export async function POST(req: Request) {
     });
 
     // Log successful job creation
-    console.log(`Job ${result.job.id} created for user ${user.id}`);
+    // console.log(`Job ${result.job.id} created for user ${user.id}`);
 
     return NextResponse.json({
       success: true,
