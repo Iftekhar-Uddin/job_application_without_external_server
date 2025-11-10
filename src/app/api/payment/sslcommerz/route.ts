@@ -75,7 +75,7 @@ export async function POST(req: Request) {
       tran_id: tranId,
       success_url: `${app_url}/api/payment/sslcommerz/success?session=${tranId}`,
       fail_url: `${app_url}/api/payment/sslcommerz/fail?session=${tranId}`,
-      cancel_url: `${app_url}/jobs/post?cancelled=true`,
+      cancel_url: `${app_url}/api/payment/sslcommerz/cancel?session=${tranId}`,
       cus_name: session.user.name || "Customer",
       cus_email: session.user.email,
       cus_phone: "01731615141",

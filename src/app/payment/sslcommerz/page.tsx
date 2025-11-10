@@ -1,3 +1,4 @@
+// app/payment/sslcommerz/page.tsx
 import { Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -5,17 +6,13 @@ import {
   XCircle, 
   AlertCircle, 
   Info,
-  ExternalLink,
   Clock
 } from "lucide-react";
 
-// Client component that uses searchParams
-function PaymentStatusContent({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
-  const paymentStatus = searchParams.payment as string;
-  const jobId = searchParams.jobId as string;
-  const tranId = searchParams.tranId as string;
 
+function PaymentStatusContent({ paymentStatus, jobId, tranId }: {  paymentStatus: string | null; jobId: string | null; tranId: string | null}) {
   const getNotificationConfig = (status: string | null) => {
+
     switch (status) {
       case "success":
         return {
@@ -80,85 +77,10 @@ function PaymentStatusContent({ searchParams }: { searchParams: { [key: string]:
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Payment Status Notification */}
-      <AnimatePresence>
-        {notification && (
-          <motion.div
-            initial={{ opacity: 0, y: -50 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -50 }}
-            className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-50 ${notification.bgColor} ${notification.borderColor} border rounded-lg shadow-lg p-4 max-w-md w-full mx-4`}
-          >
-            <div className="flex items-start gap-3">
-              <notification.icon className={`h-6 w-6 mt-0.5 ${notification.color}`} />
-              <div className="flex-1">
-                <h3 className={`font-semibold ${notification.color}`}>
-                  {notification.title}
-                </h3>
-                <p className="text-gray-700 text-sm mt-1">
-                  {notification.message}
-                </p>
-                
-                {/* Additional info for specific statuses */}
-                {jobId && paymentStatus === "success" && (
-                  <div className="mt-2 text-xs text-gray-600">
-                    Job ID: <span className="font-mono">{jobId}</span>
-                  </div>
-                )}
-                
-                {tranId && (paymentStatus === "failed" || paymentStatus === "cancelled") && (
-                  <div className="mt-2 text-xs text-gray-600">
-                    Transaction ID: <span className="font-mono">{tranId}</span>
-                  </div>
-                )}
-
-                {/* Action buttons */}
-                <div className="mt-3 flex gap-2">
-                  {paymentStatus === "success" && (
-                    <button
-                      onClick={() => {
-                        window.location.href = `/jobs?status=published`;
-                      }}
-                      className="text-xs bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition-colors"
-                    >
-                      View Posted Jobs
-                    </button>
-                  )}
-                  
-                  {(paymentStatus === "failed" || paymentStatus === "error") && (
-                    <button
-                      onClick={() => {
-                        window.location.href = "/jobs/post";
-                      }}
-                      className="text-xs bg-blue-600 text-white px-3 py-1 rounded hover:bg-blue-700 transition-colors"
-                    >
-                      Try Again
-                    </button>
-                  )}
-                  
-                  <button
-                    onClick={() => window.location.href = "/jobs"}
-                    className="text-xs bg-gray-500 text-white px-3 py-1 rounded hover:bg-gray-600 transition-colors"
-                  >
-                    Dismiss
-                  </button>
-                </div>
-              </div>
-              <button
-                onClick={() => window.location.href = "/jobs"}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <XCircle className="h-5 w-5" />
-              </button>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
       {/* Main Content */}
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 text-center">
         <div className="bg-white rounded-lg shadow-sm border p-8">
-          {notification && (
+          {notification ? (
             <>
               <notification.icon className={`h-16 w-16 mx-auto ${notification.color} mb-4`} />
               <h1 className="text-2xl font-bold text-gray-900 mb-2">
@@ -172,6 +94,13 @@ function PaymentStatusContent({ searchParams }: { searchParams: { [key: string]:
                 <div className="mb-4 p-3 bg-gray-50 rounded-lg">
                   <p className="text-sm text-gray-600">Job ID</p>
                   <p className="font-mono text-lg font-semibold">{jobId}</p>
+                </div>
+              )}
+              
+              {tranId && (paymentStatus === "failed" || paymentStatus === "cancelled") && (
+                <div className="mb-4 p-3 bg-gray-50 rounded-lg">
+                  <p className="text-sm text-gray-600">Transaction ID</p>
+                  <p className="font-mono text-lg font-semibold">{tranId}</p>
                 </div>
               )}
               
@@ -218,9 +147,7 @@ function PaymentStatusContent({ searchParams }: { searchParams: { [key: string]:
                 </button>
               </div>
             </>
-          )}
-          
-          {!notification && (
+          ) : (
             <>
               <Info className="h-16 w-16 mx-auto text-gray-400 mb-4" />
               <h1 className="text-2xl font-bold text-gray-900 mb-2">
@@ -243,12 +170,14 @@ function PaymentStatusContent({ searchParams }: { searchParams: { [key: string]:
   );
 }
 
-// Main server component
-export default function PaymentStatusPage({ 
-  searchParams 
-}: { 
-  searchParams: { [key: string]: string | string[] | undefined } 
-}) {
+
+export default async function PaymentStatusPage( { searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }>} ) {
+
+  const params = await searchParams;
+  const paymentStatus = Array.isArray(params.payment) ? params.payment[0] : params.payment;
+  const jobId = Array.isArray(params.jobId) ? params.jobId[0] : params.jobId;
+  const tranId = Array.isArray(params.tranId) ? params.tranId[0] : params.tranId;
+
   return (
     <Suspense fallback={
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -258,7 +187,11 @@ export default function PaymentStatusPage({
         </div>
       </div>
     }>
-      <PaymentStatusContent searchParams={searchParams} />
+      <PaymentStatusContent 
+        paymentStatus={paymentStatus || null}
+        jobId={jobId || null}
+        tranId={tranId || null}
+      />
     </Suspense>
   );
 }

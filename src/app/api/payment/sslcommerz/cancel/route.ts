@@ -2,6 +2,14 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET(req: Request) {
+  return handleCancel(req);
+}
+
+export async function POST(req: Request) {
+  return handleCancel(req);
+}
+
+async function handleCancel(req: Request) {
   const { searchParams } = new URL(req.url);
   const tranId = searchParams.get("session");
 
@@ -30,7 +38,6 @@ export async function GET(req: Request) {
     return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=error`);
   }
 }
-
 
 
 
