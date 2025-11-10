@@ -34,7 +34,7 @@ export default function SubmitJobPage() {
   const handleSendToAdmin = async () => {
     setLoading(true);
     try {
-      const res = await fetch("/api/job/admin-approval", {
+      const res = await fetch("/api/publish/admin", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(draft),
@@ -53,7 +53,7 @@ export default function SubmitJobPage() {
   const handlePayment = async (provider: "stripe" | "sslcommerz") => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/${provider}`, {
+      const res = await fetch(`/api/payment/${provider}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(draft),
