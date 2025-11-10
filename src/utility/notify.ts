@@ -20,7 +20,7 @@ export const EmailNotify = async (jobId: string, newStatus: string) => {
   }
 
   const { email, name } = job.postedBy;
-  const jobUrl = `https://myjobapplication.localhost:44317/jobs/${job.id}`;
+  const jobUrl = `https://my-job-application.vercel.app/jobs/${job.id}`;
   const formattedDate = new Date(job.updatedAt).toLocaleDateString();
 
 

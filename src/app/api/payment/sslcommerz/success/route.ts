@@ -20,7 +20,7 @@ async function handlePaymentSuccess(request: Request) {
     console.log("Payment success for tranId:", tranId);
 
     if (!tranId) {
-      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=error`);
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/success?payment=error`);
     }
 
     const payment = await prisma.payment.findFirst({
@@ -29,7 +29,7 @@ async function handlePaymentSuccess(request: Request) {
 
     if (!payment) {
       console.log("Payment not found for tranId:", tranId);
-      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=invalid`);
+      return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/success?payment=invalid`);
     }
 
     // Update payment and job status
@@ -52,7 +52,7 @@ async function handlePaymentSuccess(request: Request) {
 
   } catch (error) {
     console.error("Payment success handler error:", error);
-    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=error`);
+    return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/success?payment=error`);
   }
 }
 
