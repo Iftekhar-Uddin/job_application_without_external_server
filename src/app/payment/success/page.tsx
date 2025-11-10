@@ -33,16 +33,18 @@ export default function PaymentSuccessPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [retryCount, setRetryCount] = useState(0);
+  const [hasAutoFetched, setHasAutoFetched] = useState(false);
 
   const sessionId = search.get("session_id");
   const paymentStatus = search.get("payment");
   const jobId = search.get("jobId");
 
-  console.log("🔍 Page loaded with:", { paymentStatus, jobId, sessionId });
+  console.log("🔍 Page loaded with:", { paymentStatus, jobId, sessionId, hasAutoFetched });
 
   const fetchPayment = async () => {
     try {
       console.log("🔄 Fetching payment data...");
+      setLoading(true);
       let paymentData;
 
       if (sessionId) {
@@ -78,10 +80,11 @@ export default function PaymentSuccessPage() {
       
       // Auto-retry for SSLCOMMERZ (payment might not be immediately available)
       if (jobId && retryCount < 3) {
+        console.log(`🔄 Auto-retrying in 2 seconds... (${retryCount + 1}/3)`);
         setTimeout(() => {
           setRetryCount(prev => prev + 1);
-          setLoading(true);
         }, 2000);
+        return; // Don't set loading to false yet
       }
     } finally {
       setLoading(false);
@@ -89,7 +92,13 @@ export default function PaymentSuccessPage() {
   };
 
   useEffect(() => {
-    console.log("🎯 useEffect triggered:", { paymentStatus, jobId, sessionId, retryCount });
+    console.log("🎯 useEffect triggered:", { paymentStatus, jobId, sessionId, retryCount, hasAutoFetched });
+
+    // If we already have payment data, don't fetch again
+    if (payment) {
+      console.log("✅ Already have payment data, skipping fetch");
+      return;
+    }
 
     // Handle error cases immediately
     if (paymentStatus === "invalid" || paymentStatus === "error") {
@@ -99,21 +108,44 @@ export default function PaymentSuccessPage() {
       return;
     }
 
-    // If we have success status or jobId, fetch payment data
-    if (paymentStatus === "success" || jobId) {
-      console.log("🚀 Fetching payment data...");
+    // AUTO-FETCH: If we have success parameters, fetch immediately
+    if ((paymentStatus === "success" || jobId) && !hasAutoFetched) {
+      console.log("🚀 Auto-fetching payment data on page load");
+      setHasAutoFetched(true);
       fetchPayment();
-    } else {
-      console.log("⏹️ No conditions met for fetching");
+    } else if (retryCount > 0 && !payment) {
+      // Retry logic
+      console.log("🔄 Retry fetch triggered");
+      fetchPayment();
+    } else if (!paymentStatus && !jobId && !sessionId) {
+      // No parameters - show error
+      console.log("⏹️ No payment parameters found");
       setLoading(false);
+      setError("No payment information found. Please check your payment confirmation email.");
     }
-  }, [paymentStatus, jobId, sessionId, retryCount]);
+  }, [paymentStatus, jobId, sessionId, retryCount, hasAutoFetched, payment]);
+
+  // Force fetch on component mount if we have parameters
+  useEffect(() => {
+    if ((paymentStatus === "success" || jobId) && !hasAutoFetched && !payment) {
+      console.log("🎯 Component mount - triggering auto-fetch");
+      setHasAutoFetched(true);
+      fetchPayment();
+    }
+  }, []);
 
   const handleRetry = () => {
     setRetryCount(0);
-    setLoading(true);
     setError(null);
     fetchPayment();
+  };
+
+  const handleGoHome = () => {
+    router.push("/");
+  };
+
+  const handleGoToDashboard = () => {
+    router.push("/dashboard");
   };
 
   // Show loading state
@@ -121,13 +153,20 @@ export default function PaymentSuccessPage() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-50 to-blue-50 p-4">
         <div className="text-center max-w-md">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+            className="rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"
+          />
           <h2 className="text-xl font-semibold text-slate-800 mb-2">
-            {retryCount > 0 ? `Loading payment... (Attempt ${retryCount + 1}/3)` : "Loading payment details..."}
+            {retryCount > 0 ? `Processing Payment... (Attempt ${retryCount + 1}/3)` : "Processing Your Payment..."}
           </h2>
-          <p className="text-sm text-slate-500">
-            Please wait while we retrieve your payment information.
+          <p className="text-sm text-slate-500 mb-4">
+            Please wait while we confirm your payment details.
           </p>
+          <div className="text-xs text-slate-400">
+            Job ID: {jobId || "Loading..."}
+          </div>
         </div>
       </div>
     );
@@ -142,13 +181,13 @@ export default function PaymentSuccessPage() {
             <span className="text-3xl">⚠️</span>
           </div>
           <h2 className="text-xl font-semibold text-slate-800 mb-2">
-            {error?.includes("not found") ? "Payment Not Found" : "Payment Error"}
+            {error?.includes("not found") ? "Payment Not Found" : "Payment Processing Issue"}
           </h2>
           <p className="text-sm text-slate-500 mb-2">
-            {error || "Unable to load payment details."}
+            {error || "We're having trouble loading your payment details."}
           </p>
           <p className="text-xs text-slate-400 mb-6">
-            Job ID: {jobId || "Not provided"}
+            {jobId && `Job ID: ${jobId}`}
           </p>
           <div className="flex flex-col sm:flex-row gap-3 justify-center">
             <button
@@ -158,10 +197,16 @@ export default function PaymentSuccessPage() {
               <RefreshCw size={14} /> Try Again
             </button>
             <button
-              onClick={() => router.push("/dashboard")}
+              onClick={handleGoToDashboard}
               className="flex items-center gap-2 px-4 py-2 bg-gray-600 hover:bg-gray-700 text-white rounded-lg text-sm transition"
             >
-              <ArrowLeft size={14} /> Go to Dashboard
+              <ArrowLeft size={14} /> Dashboard
+            </button>
+            <button
+              onClick={handleGoHome}
+              className="flex items-center gap-2 px-4 py-2 bg-orange-600 hover:bg-orange-700 text-white rounded-lg text-sm transition"
+            >
+              <ArrowLeft size={14} /> Home
             </button>
           </div>
         </div>
@@ -182,7 +227,7 @@ export default function PaymentSuccessPage() {
 
         <div className="border-b border-slate-100 px-6 py-4 bg-white">
           <h1 className="text-lg md:text-xl font-semibold text-slate-800">
-            Payment Confirmation
+            Payment Confirmed ✅
           </h1>
           <span className="text-xs font-medium text-slate-500">
             {new Date(payment.createdAt).toLocaleString()}
@@ -207,7 +252,7 @@ export default function PaymentSuccessPage() {
                 Payment Successful!
               </h2>
               <p className="text-sm text-slate-500">
-                Your job posting is now live on our platform.
+                Your job posting is now live and visible to candidates.
               </p>
             </div>
 
