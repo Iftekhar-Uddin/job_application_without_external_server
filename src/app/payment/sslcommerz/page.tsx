@@ -1,4 +1,5 @@
-// app/payment/sslcommerz/page.tsx
+"use client";
+
 import { Suspense } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
@@ -9,10 +10,17 @@ import {
   Clock
 } from "lucide-react";
 
+// Remove the async and make it a client component
+export default function PaymentStatusPage({ 
+  searchParams 
+}: { 
+  searchParams: { [key: string]: string | string[] | undefined }
+}) {
+  const paymentStatus = Array.isArray(searchParams.payment) ? searchParams.payment[0] : searchParams.payment;
+  const jobId = Array.isArray(searchParams.jobId) ? searchParams.jobId[0] : searchParams.jobId;
+  const tranId = Array.isArray(searchParams.tranId) ? searchParams.tranId[0] : searchParams.tranId;
 
-function PaymentStatusContent({ paymentStatus, jobId, tranId }: {  paymentStatus: string | null; jobId: string | null; tranId: string | null}) {
-  const getNotificationConfig = (status: string | null) => {
-
+  const getNotificationConfig = (status: string | undefined) => {
     switch (status) {
       case "success":
         return {
@@ -167,31 +175,5 @@ function PaymentStatusContent({ paymentStatus, jobId, tranId }: {  paymentStatus
         </div>
       </div>
     </div>
-  );
-}
-
-
-export default async function PaymentStatusPage( { searchParams }: { searchParams: Promise<{ [key: string]: string | string[] | undefined }>} ) {
-
-  const params = await searchParams;
-  const paymentStatus = Array.isArray(params.payment) ? params.payment[0] : params.payment;
-  const jobId = Array.isArray(params.jobId) ? params.jobId[0] : params.jobId;
-  const tranId = Array.isArray(params.tranId) ? params.tranId[0] : params.tranId;
-
-  return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading payment status...</p>
-        </div>
-      </div>
-    }>
-      <PaymentStatusContent 
-        paymentStatus={paymentStatus || null}
-        jobId={jobId || null}
-        tranId={tranId || null}
-      />
-    </Suspense>
   );
 }
