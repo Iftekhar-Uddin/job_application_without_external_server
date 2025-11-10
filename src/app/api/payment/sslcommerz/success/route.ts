@@ -31,7 +31,7 @@ export async function GET(req: Request) {
     ]);
 
     return NextResponse.redirect(
-      `${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?tranId=${tranId}`
+      `${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=success&jobId=${payment.jobId}`
     );
 
   } catch (error) {
@@ -39,15 +39,6 @@ export async function GET(req: Request) {
     return NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}/payment/sslcommerz?payment=error`);
   }
 }
-
-
-
-
-
-
-
-
-
 
 
 
