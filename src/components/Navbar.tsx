@@ -226,7 +226,7 @@ const Navbar = () => {
               <div className="flex items-center space-x-3">
                 <Link
                   href="/auth/signin"
-                  className="flex items-center space-x-2 px-3 py-1.5 rounded-xl font-medium text-gray-700 hover:text-black hover:bg-white transition-all duration-200 border border-slate-500"
+                  className="hidden sm:hidden md:flex lg:flex items-center space-x-2 px-3 py-1.5 rounded-xl font-medium text-gray-700 hover:text-black hover:bg-white transition-all duration-200 border border-slate-500"
                 >
                   <User size={20} />
                   <span className="hidden sm:inline">Sign In</span>
