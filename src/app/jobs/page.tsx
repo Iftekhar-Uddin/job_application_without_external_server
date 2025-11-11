@@ -12,7 +12,7 @@ import {
 import React from "react";
 
 
-const TotalJobs = async ({ searchParams }: any)  => {
+const TotalJobs = async ({ searchParams }: any) => {
   const session = await auth();
   const resolvedParams = await Promise.resolve(searchParams ?? {});
   const querys = (resolvedParams?.query as string) || "";
@@ -108,13 +108,13 @@ const TotalJobs = async ({ searchParams }: any)  => {
 
 
   return (
-    <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 bg-white/70 rounded-md sm:rounded-lg overflow-hidden" style={{ minHeight: "calc(100vh - 4rem)" }}>
-
-      <div className="h-[calc(100vh-4rem)] overflow-y-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 py-4">
+    <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 bg-white/70 rounded-md sm:rounded-lg overflow-hidden" style={{ minHeight: "calc(100vh - 10rem)" }}>
+{/* h-[calc(100vh-4rem)] overflow-y-auto */}
+      <div className="">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 py-3">
 
           <main className="lg:col-span-8 z-0">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-2">
               <div className="bg-linear-to-r from-blue-400 via-green-400 to-orange-400 bg-clip-text text-transparent">
                 <h1 className="text-xl md:text-2xl font-bold">Available Jobs</h1>
                 <p className="text-sm text-slate-600">
@@ -154,12 +154,12 @@ const TotalJobs = async ({ searchParams }: any)  => {
                   </p>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 gap-3">
+                <div className="grid grid-cols-1 gap-4 max-h-[78vh] overflow-y-auto scroll-smooth scrollbar-thin scrollbar-thumb-orange-300 scrollbar-track-orange-50 pr-2">
                   {jobs.map((job) => (
                     <Link
                       key={job.id}
                       href={`/jobs/${job.id}`}
-                      className="group relative block bg-white/80 border border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-transform transform hover:-translate-y-1 overflow-hidden"
+                      className="group relative block bg-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-lg transition transform hover:-translate-y-1 overflow-hidden"
                     >
                       <div className="relative z-10 flex flex-col p-3.5 md:p-4">
                         <div className="flex items-start justify-between gap-2.5">

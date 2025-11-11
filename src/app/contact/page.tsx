@@ -84,8 +84,8 @@ export default function ContactPage() {
               </div>
 
               <div className="flex items-start gap-4">
-                <div className="bg-purple-100 p-3 rounded-lg shrink-0">
-                  <MessageCircle className="h-5 w-5 md:h-6 md:w-6 text-purple-600" />
+                <div className="bg-orange-100 p-3 rounded-lg shrink-0">
+                  <MessageCircle className="h-5 w-5 md:h-6 md:w-6 text-orange-600" />
                 </div>
                 <div className="min-w-0">
                   <h3 className="font-semibold text-gray-900 text-sm md:text-base">Live Chat</h3>
@@ -226,7 +226,7 @@ export default function ContactPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm md:text-base"
+                className="w-full bg-slate-700 text-white py-3 px-6 rounded-lg hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm md:text-base"
               >
                 {isSubmitting ? (
                   <>

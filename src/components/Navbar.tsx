@@ -1,3 +1,4 @@
+
 "use client";
 
 import { setSession } from "@/redux/authSlice/authSlice";
@@ -5,35 +6,21 @@ import { AppDispatch } from "@/redux/store";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { motion, AnimatePresence } from "framer-motion";
 import Notification from "./Notification";
 import { currentUserClient } from "@/hooks/currentUser";
-import { 
-  Briefcase, 
-  PlusCircle, 
-  LayoutDashboard, 
-  Contact, 
-  User, 
-  Settings, 
-  LogOut, 
-  Menu, 
-  X,
-  ChevronDown,
-  Search,
-  Building
-} from "lucide-react";
+import { Briefcase, PlusCircle, LayoutDashboard, Contact, User, Settings, LogOut, Menu, X, ChevronDown, Search, Building } from "lucide-react";
 
 const Navbar = () => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
-  const pathname = usePathname();
   const { data: session } = useSession();
+  const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const navRef = useRef<HTMLDivElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -42,14 +29,6 @@ const Navbar = () => {
   useEffect(() => {
     dispatch(setSession(session?.user as any));
   }, [session]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
 
   const handleToggleMenu = () => setIsOpen((prev) => !prev);
   const handleToggleDropdown = () => setDropdownOpen((prev) => !prev);
@@ -94,93 +73,82 @@ const Navbar = () => {
   const isActiveRoute = (path: string) => pathname === path;
 
   return (
-    <nav 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        scrolled 
-          ? "bg-white/95 backdrop-blur-lg shadow-lg border-b border-gray-200/50" 
-          : "bg-white/90 backdrop-blur-md border-b border-gray-100"
-      }`}
-    >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-3 group">
-            <div className="relative">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-purple-600 rounded-xl flex items-center justify-center shadow-lg group-hover:shadow-xl transition-all duration-300">
-                <Building className="h-6 w-6 text-white" />
-              </div>
-              <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl blur opacity-20 group-hover:opacity-30 transition duration-1000 group-hover:duration-200"></div>
-            </div>
-            <div className="flex flex-col">
-              <span className="text-xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                CareerConnect
-              </span>
-              <span className="text-xs text-gray-500 font-medium">by JobBoard</span>
-            </div>
+    <nav className="mx-auto bg-white/70 max-w-7xl ring-1 ring-slate-500 rounded-sm md:rounded-lg h-12 sm:h-16 sticky top-0 z-50">
+      <div className="flex w-full h-full justify-center items-center px-4 sm:px-6">
+        <div className="flex items-center justify-between w-full">
+
+          {/* Logo Section */}
+          <Link
+            onClick={() => setIsOpen(false)}
+            href="/"
+            className="flex items-center gap-1 shrink-0"
+          >
+            <Image
+              className=" h-7 w-7 sm:h-8 sm:w-8"
+              src="/job.png"
+              alt="Job logo"
+              height={36}
+              width={36}
+            />
+            <span className="text-sm sm:text-base lg:text-lg font-semibold text-slate-600">
+              Job Board
+            </span>
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-1">
+          <div className="hidden md:flex items-center justify-center flex-1 max-w-2xl mx-0 lg:mx-4">
             {session ? (
-              <>
+              <div className="flex items-center space-x-1 lg:space-x-4">
                 {navItems.map((item) => {
                   const Icon = item.icon;
                   return (
                     <Link
                       key={item.href}
                       href={item.href}
-                      className={`flex items-center space-x-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
-                        isActiveRoute(item.href)
-                          ? "text-blue-600 bg-blue-50 shadow-sm"
-                          : "text-gray-600 hover:text-blue-600 hover:bg-gray-50"
-                      }`}
+                      className={`flex items-center space-x-1 lg:space-x-2 p-1.5 lg:px-4 rounded-xl font-medium transition-all duration-200 ${isActiveRoute(item.href)
+                        ? "text-black bg-white shadow-sm"
+                        : "text-slate-700 hover:text-black hover:bg-white"
+                        }`}
                     >
-                      <Icon size={18} />
-                      <span>{item.label}</span>
+                      <Icon size={16} />
+                      <span className="text-sm sm:text-base md:text-md">{item.label}</span>
                     </Link>
                   );
                 })}
-              </>
+              </div>
             ) : (
-              <>
+              <div className="flex items-center space-x-1">
                 <Link
                   href="/jobs"
-                  className="flex items-center space-x-2 px-4 py-2 rounded-xl font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition-all duration-200"
+                  className="flex items-center space-x-2 px-4 py-2 rounded-xl font-medium text-gray-600 hover:text-black hover:bg-white transition-all duration-200"
                 >
-                  <Briefcase size={18} />
+                  <Briefcase size={20} />
                   <span>Browse Jobs</span>
                 </Link>
-                <Link
-                  href="/auth/signin"
-                  className="flex items-center space-x-2 px-4 py-2 rounded-xl font-medium text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition-all duration-200"
-                >
-                  <User size={18} />
-                  <span>Sign In</span>
-                </Link>
-              </>
+              </div>
             )}
           </div>
 
-          {/* Right Section - Notification & Profile */}
-          <div className="flex items-center space-x-3">
-            {session && (
+          {/* Right Section - Auth & Profile */}
+          <div className="flex items-center space-x-0.5 lg:space-x-4 justify-end shrink-0">
+            {session ? (
               <>
                 <Notification />
-                
+
                 {/* Profile Dropdown */}
                 <div ref={dropdownRef} className="relative">
                   <button
                     onClick={handleToggleDropdown}
-                    className="flex items-center space-x-3 p-1 rounded-2xl hover:bg-gray-50 transition-all duration-200 group"
+                    className="hidden sm:hidden md:flex lg:flex items-center space-x-0 p-1 rounded-lg hover:bg-gray-50 transition-all duration-200 group"
                   >
-                    <div className="flex items-center space-x-2">
+                    <div className="flex items-center space-x-1">
                       <div className="relative">
                         <Image
                           src={session.user?.image || "https://icon-library.com/images/no-profile-pic-icon/no-profile-pic-icon-11.jpg"}
                           alt="Profile"
                           width={40}
                           height={40}
-                          className="rounded-xl border-2 border-gray-200 group-hover:border-blue-200 transition-colors duration-200"
+                          className="rounded-xl border-2 border-slate-300 group-hover:border-blue-200 transition-colors duration-200"
                         />
                         <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
                       </div>
@@ -193,11 +161,10 @@ const Navbar = () => {
                         </div>
                       </div>
                     </div>
-                    <ChevronDown 
-                      size={16} 
-                      className={`text-gray-400 transition-transform duration-200 ${
-                        dropdownOpen ? "rotate-180" : ""
-                      }`} 
+                    <ChevronDown
+                      size={16}
+                      className={`text-gray-400 transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""
+                        }`}
                     />
                   </button>
 
@@ -222,7 +189,7 @@ const Navbar = () => {
 
                         <Link
                           href="/profile"
-                          className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-150"
+                          className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-slate-100 hover:text-black transition-colors duration-150"
                           onClick={() => setDropdownOpen(false)}
                         >
                           <User size={18} />
@@ -232,7 +199,7 @@ const Navbar = () => {
                         {session.user?.role === "Admin" && (
                           <Link
                             href="/admin"
-                            className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-colors duration-150"
+                            className="flex items-center space-x-3 px-4 py-3 text-gray-700 hover:bg-slate-100 hover:text-black transition-colors duration-150"
                             onClick={() => setDropdownOpen(false)}
                           >
                             <Settings size={18} />
@@ -254,6 +221,17 @@ const Navbar = () => {
                   </AnimatePresence>
                 </div>
               </>
+            ) : (
+              // Sign In button aligned to the right
+              <div className="flex items-center space-x-3">
+                <Link
+                  href="/auth/signin"
+                  className="flex items-center space-x-2 px-3 py-1.5 rounded-xl font-medium text-gray-700 hover:text-black hover:bg-white transition-all duration-200 border border-slate-500"
+                >
+                  <User size={20} />
+                  <span className="hidden sm:inline">Sign In</span>
+                </Link>
+              </div>
             )}
 
             {/* Mobile Menu Button */}
@@ -262,147 +240,147 @@ const Navbar = () => {
               className="md:hidden p-2 rounded-xl hover:bg-gray-100 transition-colors duration-200"
             >
               {isOpen ? (
-                <X size={24} className="text-gray-600" />
+                <X size={28} className="text-gray-600" />
               ) : (
-                <Menu size={24} className="text-gray-600" />
+                <Menu size={28} className="text-gray-600" />
               )}
             </button>
           </div>
         </div>
-      </div>
 
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isOpen && (
-          <>
-            {/* Backdrop */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 md:hidden"
-              onClick={() => setIsOpen(false)}
-            />
-            
-            {/* Menu Panel */}
-            <motion.div
-              initial="closed"
-              animate="open"
-              exit="closed"
-              variants={mobileMenuVariants}
-              transition={{ type: "spring", damping: 25, stiffness: 200 }}
-              className="fixed top-0 right-0 bottom-0 w-80 bg-white/95 backdrop-blur-lg shadow-xl z-50 md:hidden border-l border-gray-200/50"
-            >
-              <div className="flex flex-col h-full">
-                {/* Header */}
-                <div className="p-6 border-b border-gray-100">
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <Image
-                        src={session?.user?.image || "https://icon-library.com/images/no-profile-pic-icon/no-profile-pic-icon-11.jpg"}
-                        alt="Profile"
-                        width={48}
-                        height={48}
-                        className="rounded-xl border-2 border-gray-200"
-                      />
-                      <div>
-                        <div className="font-semibold text-gray-900">
-                          {session?.user?.name || "Welcome"}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {session?.user?.email || "Guest"}
+        {/* Mobile Menu */}
+        <AnimatePresence>
+          {isOpen && (
+            <>
+              {/* Backdrop */}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 md:hidden"
+                onClick={() => setIsOpen(false)}
+              />
+
+              {/* Menu Panel */}
+              <motion.div
+                initial="closed"
+                animate="open"
+                exit="closed"
+                variants={mobileMenuVariants}
+                transition={{ type: "spring", damping: 25, stiffness: 200 }}
+                className="fixed top-0 right-0 bottom-0 w-80 bg-white/95 backdrop-blur-lg shadow-xl z-50 md:hidden border-l border-gray-200/50"
+                ref={navRef}
+              >
+                <div className="flex flex-col h-full">
+                  {/* Header */}
+                  <div className="p-6 border-b border-gray-100">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-3">
+                        <Image
+                          src={session?.user?.image || "https://icon-library.com/images/no-profile-pic-icon/no-profile-pic-icon-11.jpg"}
+                          alt="Profile"
+                          width={52}
+                          height={52}
+                          className="rounded-xl border-2 border-gray-200"
+                        />
+                        <div>
+                          <div className="font-semibold text-gray-900">
+                            {session?.user?.name || "Welcome"}
+                          </div>
+                          <div className="text-sm text-gray-500">
+                            {session?.user?.email || "Guest"}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Menu Items */}
-                <div className="flex-1 p-6 space-y-2">
-                  {session ? (
-                    <>
-                      {navItems.map((item) => {
-                        const Icon = item.icon;
-                        return (
+                  {/* Menu Items */}
+                  <div className="flex-1 p-6 space-y-2 overflow-y-auto">
+                    {session ? (
+                      <>
+                        {navItems.map((item) => {
+                          const Icon = item.icon;
+                          return (
+                            <Link
+                              key={item.href}
+                              href={item.href}
+                              onClick={() => setIsOpen(false)}
+                              className={`flex items-center space-x-3 p-4 rounded-xl font-medium transition-all duration-200 ${isActiveRoute(item.href)
+                                ? "text-black bg-slate-200"
+                                : "text-black hover:bg-slate-100"
+                                }`}
+                            >
+                              <Icon size={22} />
+                              <span className="text-lg">{item.label}</span>
+                            </Link>
+                          );
+                        })}
+
+                        <div className="border-t border-gray-100 pt-4 mt-4">
                           <Link
-                            key={item.href}
-                            href={item.href}
+                            href="/profile"
                             onClick={() => setIsOpen(false)}
-                            className={`flex items-center space-x-3 p-3 rounded-xl font-medium transition-all duration-200 ${
-                              isActiveRoute(item.href)
-                                ? "text-blue-600 bg-blue-50"
-                                : "text-gray-600 hover:bg-gray-50"
-                            }`}
+                            className="flex items-center space-x-3 p-4 rounded-xl font-medium text-gray-600 hover:bg-gray-50 transition-all duration-200"
                           >
-                            <Icon size={20} />
-                            <span>{item.label}</span>
+                            <User size={22} />
+                            <span className="text-lg">Profile Settings</span>
                           </Link>
-                        );
-                      })}
 
-                      <div className="border-t border-gray-100 pt-4 mt-4">
+                          {session.user?.role === "Admin" && (
+                            <Link
+                              href="/admin"
+                              onClick={() => setIsOpen(false)}
+                              className="flex items-center space-x-3 p-4 rounded-xl font-medium text-gray-600 hover:bg-gray-50 transition-all duration-200"
+                            >
+                              <Settings size={22} />
+                              <span className="text-lg">Admin Panel</span>
+                            </Link>
+                          )}
+
+                          <button
+                            onClick={handleSignOut}
+                            className="flex items-center space-x-3 w-full p-4 rounded-xl font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all duration-200"
+                          >
+                            <LogOut size={22} />
+                            <span className="text-lg">Sign Out</span>
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
                         <Link
-                          href="/profile"
+                          href="/jobs"
                           onClick={() => setIsOpen(false)}
-                          className="flex items-center space-x-3 p-3 rounded-xl font-medium text-gray-600 hover:bg-gray-50 transition-all duration-200"
+                          className="flex items-center space-x-3 p-4 rounded-xl font-medium text-gray-600 hover:bg-gray-50 transition-all duration-200"
                         >
-                          <User size={20} />
-                          <span>Profile Settings</span>
+                          <Briefcase size={22} />
+                          <span className="text-lg">Browse Jobs</span>
                         </Link>
-
-                        {session.user?.role === "Admin" && (
-                          <Link
-                            href="/admin"
-                            onClick={() => setIsOpen(false)}
-                            className="flex items-center space-x-3 p-3 rounded-xl font-medium text-gray-600 hover:bg-gray-50 transition-all duration-200"
-                          >
-                            <Settings size={20} />
-                            <span>Admin Panel</span>
-                          </Link>
-                        )}
-
-                        <button
-                          onClick={handleSignOut}
-                          className="flex items-center space-x-3 w-full p-3 rounded-xl font-medium text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all duration-200"
+                        <Link
+                          href="/auth/signin"
+                          onClick={() => setIsOpen(false)}
+                          className="flex items-center space-x-3 p-4 rounded-xl font-medium text-gray-600 hover:bg-gray-50 transition-all duration-200"
                         >
-                          <LogOut size={20} />
-                          <span>Sign Out</span>
-                        </button>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <Link
-                        href="/jobs"
-                        onClick={() => setIsOpen(false)}
-                        className="flex items-center space-x-3 p-3 rounded-xl font-medium text-gray-600 hover:bg-gray-50 transition-all duration-200"
-                      >
-                        <Briefcase size={20} />
-                        <span>Browse Jobs</span>
-                      </Link>
-                      <Link
-                        href="/auth/signin"
-                        onClick={() => setIsOpen(false)}
-                        className="flex items-center space-x-3 p-3 rounded-xl font-medium text-gray-600 hover:bg-gray-50 transition-all duration-200"
-                      >
-                        <User size={20} />
-                        <span>Sign In</span>
-                      </Link>
-                    </>
-                  )}
-                </div>
+                          <User size={22} />
+                          <span className="text-lg">Sign In</span>
+                        </Link>
+                      </>
+                    )}
+                  </div>
 
-                {/* Footer */}
-                <div className="p-6 border-t border-gray-100">
-                  <div className="text-center text-sm text-gray-500">
-                    © 2025 Iftekhar Uddin. All rights reserved.
+                  {/* Footer */}
+                  <div className="p-6 border-t border-gray-100">
+                    <div className="text-center text-sm text-gray-500">
+                      © 2025 Iftekhar Uddin. All rights reserved.
+                    </div>
                   </div>
                 </div>
-              </div>
-            </motion.div>
-          </>
-        )}
-      </AnimatePresence>
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>
+      </div>
     </nav>
   );
 };
