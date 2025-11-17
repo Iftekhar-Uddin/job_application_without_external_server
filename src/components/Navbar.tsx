@@ -77,7 +77,6 @@ const Navbar = () => {
       <div className="flex w-full h-full justify-center items-center px-4 sm:px-6">
         <div className="flex items-center justify-between w-full">
 
-          {/* Logo Section */}
           <Link
             onClick={() => setIsOpen(false)}
             href="/"
@@ -95,7 +94,6 @@ const Navbar = () => {
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
           <div className="hidden md:flex items-center justify-center flex-1 max-w-2xl mx-0 lg:mx-4">
             {session ? (
               <div className="flex items-center space-x-1 lg:space-x-4">
@@ -129,13 +127,11 @@ const Navbar = () => {
             )}
           </div>
 
-          {/* Right Section - Auth & Profile */}
           <div className="flex items-center space-x-0.5 lg:space-x-4 justify-end shrink-0">
             {session ? (
               <>
                 <Notification />
 
-                {/* Profile Dropdown */}
                 <div ref={dropdownRef} className="relative">
                   <button
                     onClick={handleToggleDropdown}
@@ -234,7 +230,6 @@ const Navbar = () => {
               </div>
             )}
 
-            {/* Mobile Menu Button */}
             <button
               onClick={handleToggleMenu}
               className="md:hidden p-2 rounded-xl hover:bg-gray-100 transition-colors duration-200"
@@ -248,11 +243,9 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile Menu */}
         <AnimatePresence>
           {isOpen && (
             <>
-              {/* Backdrop */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -261,7 +254,6 @@ const Navbar = () => {
                 onClick={() => setIsOpen(false)}
               />
 
-              {/* Menu Panel */}
               <motion.div
                 initial="closed"
                 animate="open"
@@ -295,7 +287,6 @@ const Navbar = () => {
                     </div>
                   </div>
 
-                  {/* Menu Items */}
                   <div className="flex-1 p-6 space-y-2 overflow-y-auto">
                     {session ? (
                       <>
@@ -369,7 +360,6 @@ const Navbar = () => {
                     )}
                   </div>
 
-                  {/* Footer */}
                   <div className="p-6 border-t border-gray-100">
                     <div className="text-center text-sm text-gray-500">
                       © 2025 Iftekhar Uddin. All rights reserved.
