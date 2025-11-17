@@ -23,7 +23,7 @@ export default function ApplicantModal({ open, onClose, title, children, size = 
     router.push("/auth/signin")
   };
 
-  // Prevent background scroll when open
+  // disabled background scroll when open
   useEffect(() => {
     if (open) {
       const prev = document.body.style.overflow;
@@ -35,7 +35,6 @@ export default function ApplicantModal({ open, onClose, title, children, size = 
     return;
   }, [open]);
 
-  // Close on Escape
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -44,12 +43,10 @@ export default function ApplicantModal({ open, onClose, title, children, size = 
     return () => document.removeEventListener("keydown", onKey);
   }, [open, onClose]);
 
-  // Click outside to close (backdrop)
   const onBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) onClose();
   };
 
-  // width utility
   const sizeClass = size === "sm" ? "max-w-2xl" : size === "md" ? "max-w-4xl" : "max-w-5xl";
 
   if (!open) return null;
