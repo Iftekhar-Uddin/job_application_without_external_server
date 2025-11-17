@@ -28,7 +28,6 @@ export default function useNotifications() {
     if (!userId) return;
 
     try {
-      // get short-lived token from Next.js
       const res = await fetch("/api/auth/socket-token");
       if (!res.ok) {
         console.warn("socket-token failed");
@@ -81,7 +80,7 @@ export default function useNotifications() {
     };
   }, [userId]);
 
-  // mark as read (keeps your current usage)
+  // mark as read, keep my current usage
   const markAsRead = async (id: string) => {
     await fetch(`/api/notifications/${id}/read`, { method: "PATCH" });
     mutate(); // revalidate
