@@ -35,7 +35,6 @@ export default function Notification() {
         }
     }, [open, markManyAsRead, sortedNotifications, unreadCount]);
 
-    // Close panel on outside click and escape key
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (
@@ -251,58 +250,4 @@ export default function Notification() {
 }
 
 
-
-// useEffect(() => {
-//     function handleClickOutside(event: MouseEvent) {
-//         const target = event.target as Node;
-
-//         if (
-//             // not inside the notification panel
-//             panelRef.current &&
-//             !panelRef.current.contains(target) &&
-//             // not inside the bell button
-//             buttonRef.current &&
-//             !buttonRef.current.contains(target) &&
-//             // not inside the external ref (if provided)
-//             (!mouseRef?.current || !mouseRef.current.contains(target))
-//         ) {
-//             setOpen(false);
-//         }
-//     }
-
-//     document.addEventListener("mousedown", handleClickOutside);
-//     return () => document.removeEventListener("mousedown", handleClickOutside);
-// }, [mouseRef]);
-
-
-
-// Example: when user opens panel, mark visible items as read after 1s
-// useEffect(() => {
-//     if (!listRef.current) return;
-//     // detect items visible and mark read when panel opened (simpler approach)
-//     const visibleUnreadIds = sorted.filter(n => !n.isRead).slice(0, 5).map(n => n.id);
-//     if (visibleUnreadIds.length) {
-//         markManyAsRead(visibleUnreadIds);
-//     }
-//     // eslint-disable-next-line react-hooks/exhaustive-deps
-// }, []);
-
-
-// bg-amber-100 absolute right-4 md:left-full w-40 sm:w-56 md:w-72 top-8 md:top-12 p-2 md:p-4 rounded-sm md:rounded-md ring-1 ring-orange-500
-
-{/* {!n.isRead && <button className="cursor-pointer flex mx-auto bg-slate-300 px-2 rounded-sm md:rounded-md" >Mark as read</button>} */ }
-
-// {" "} {n.type === "Rejected" ? "application has been Rejected" : n.type === "Accepted" ? "application has been Accepted" : "application has been Reviewed"}
-
-// {/* <div className="absolute md:top-13.5 md:left-full -right-11 w-48 md:w-72 lg:w-md md:p-4 rounded-lg bg-white text-black flex flex-col gap-4 text-sm md:text-base">
-//     {notifications.map(n => (
-//         <ul className='' key={n.id}>
-//             <li className="px-2 py-1 hover:bg-gray-100 rounded-sm md:rounded-md cursor-pointer" onClick={() => { router.push(n.data?.link), setOpen(false) }}>
-//                 <b>{n.data?.title} </b>{" "} {n.type === "Rejected" ? "application has been Rejected" : n.type === "Accepted" ? "application has been Accepted" : "application has been Reviewed"}
-//                 <p className="text-sm text-emerald-600">{new Date(n.createdAt).toLocaleString()}</p>
-//                 {/* {!n.isRead && <button className="cursor-pointer flex mx-auto bg-slate-300 px-2 rounded-sm md:rounded-md" >Mark as read</button>} */}
-//             </li>
-//         </ul>))}
-//     {notifications.length > 0 && <button className='bg-black text-white py-1 md:py-1.5 mb-1.5 md:mb-0 w-28 mx-auto md:w-full text-sm cursor-pointer rounded-sm md:rounded-lg' onClick={(reset)}>Mark All Read</button>}
-// </div> */}
 
